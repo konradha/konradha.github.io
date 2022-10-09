@@ -1,0 +1,28 @@
+baseURL = 'https://konradha.github.io/'
+languageCode = "en"
+DefaultContentLanguage = "en"
+ignoreErrors = ["error-remote-getjson"]
+
+title = 'א'
+theme = "hugo-paper"
+
+[params]
+  color = 'wheat'
+  twitter = 'konradha_'
+  github = 'konradha'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[menu]
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 9
+
+[services]
+  [services.twitter]
+    disableInlineCSS = true
