@@ -10,7 +10,7 @@ MWPM-involving algorithm to better understand it. A good reference (with
 _fast_ accompanying library) is [^1].
 
 Picture the surface code. Consider the following procedure to estimate
-the error in a given word. 
+and correct the error in a given word. 
 
 
 0.  Generate the parity check matrix _H_ for one of the operators
