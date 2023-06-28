@@ -54,7 +54,11 @@ and correct the error in a given word.
 6. Combine X-type and Z-type error correction if needed.
 
 
-
+_Note (June 28 2023)_ Apparently this procedure is a) a constructive method
+to find T-Joins (as it's called in Graph Theory) and b) an algorithm to solve the
+[Chinese Postman Problem](https://en.wikipedia.org/wiki/Chinese_postman_problem#T-joins).
+What makes the surface code decoding procedure special is the specific structure of
+the graph we're operating on.
 
 [^1]: [PyMatching](https://arxiv.org/abs/2105.13082)
-[^2]: [Edmonds, more recently, Blossom V](https://en.wikipedia.org/wiki/Blossom_algorithm)
+[^2]: [Edmonds](https://en.wikipedia.org/wiki/Blossom_algorithm)
