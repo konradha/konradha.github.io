@@ -4,7 +4,7 @@ DefaultContentLanguage = "en"
 ignoreErrors = ["error-remote-getjson"]
 
 title = 'א'
-theme = "hugo-paper"
+theme = "paper"
 
 [params]
   color = 'wheat'
