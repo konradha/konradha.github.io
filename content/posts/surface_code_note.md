@@ -56,7 +56,7 @@ and correct the error in a given word.
 
 _Note (June 28 2023)_ Apparently we're solving the 
 [Chinese Postman Problem](https://en.wikipedia.org/wiki/Chinese_postman_problem#T-joins) here.
-I'll have to follow up on that with another post, stay tuned.
+I'll investigate this further.
 
 
 [^1]: [PyMatching](https://arxiv.org/abs/2105.13082)

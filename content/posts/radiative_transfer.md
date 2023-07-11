@@ -5,19 +5,20 @@ draft: true
 ---
 
 
-I've wanted to write about this topic a long time ago: Solving PDE's using Neural Nets.
-What an amazing thing. Instead of passing years learning about approximation 
+Solving PDEs with ✨ Machine Learning✨:
+What an amazing thing. Usually, you pass years learning about approximation 
 theory, test functions, finite elements, C++, functional analysis, visualization libraries and then putting it
-together to solve (seemingly trivial) heat or wave equations (and then falling back to using Ansys in industry), you can just take
-your good ol' reliable Pytorch and have Adam walk the space that minimizes a residual you
+together to solve (seemingly trivial) heat or wave equations. Then, if you're more of a practicioner, you fall back to using Ansys in industry.
+Instead, you can just take your good ol' reliable Pytorch and have Adam walk the space that minimizes a residual you
 define for a given PDE. And: you don't even need any data. Choosing your points in a
-[smart manner](Sobol low discrepancy sequence) (ie. not sampling from some centered distribution), you can even deduce
+[smart manner](https://pytorch.org/docs/stable/generated/torch.quasirandom.SobolEngine.html)
+(ie. not sampling from some centered distribution), you can even deduce
 very nice bounds on convergence and precision of the solution you arrive at. Tremendous.
 Let's dive in.
 
-
-### The setup -- Radiative Transfer PDE
 <!---
+### The setup -- Radiative Transfer PDE
+
 At the heart of the problem lies the following PDE
 
 $\frac{1}{c} u_{t} + \omega \dot \nabla_{x} u + ku
@@ -26,7 +27,7 @@ $\frac{1}{c} u_{t} + \omega \dot \nabla_{x} u + ku
 
 Where u takes values from $\mathbb{R}^{d}$, $\Lambda$ is a real interval defining
 chromaticity, $S = \mathbb{S}^{d-1}$ and $f$ is some source term.
---->
+
 For this example, we're going to look at the [radiative tranfer PDE](wiki) which models
 different radiation phenomenae at different scales in nature. (...)
 
@@ -35,21 +36,28 @@ Solving this thing numerically is even worse as it's not only a PDE but also a p
 differential equation, ie. there's a so-called _scattering kernel_ phi that needs to be evaluated
 at every point we want to solve this PDE for.  Depending on how precise you want to solve this may be
 a really expensive thing to do.
+--->
+### The setup
+We start from a very common formulation of a PDE problem: Take some operator L defined on some
+region, have it equal some source term f. This additionally has some (periodic) boundary condition. 
 
-
- 
 
 
 ### The background -- PINNs and Surrogate models
-Let's keep this short: Your PDE can be solved by a vanilla neural net. Choosing your activation
-function(s) carefully, you might even have some [guarantees](...) on how well this should work theoretically.
+Your PDE can be solved by a vanilla neural net. Choosing your activation
+functions carefully, you might even have some [guarantees](https://arxiv.org/abs/2104.08938)
+on how well this works on paper.
+
 
 ### Implementation -- Ease and bottlenecks; acceleration
-Now: Roll your own PINN object for fun and profit. This approach may be extended to your given problem
+Now: Roll your own PINN object. This approach may be extended to your given problem fairly quickly.
 (ie. another PDE or maybe an inverse problem by introducing another neural net that approximates your
-parameter estimate ... but I digress) pretty quickly.
+parameter estimate ... see the lecture I've linked below for more possibilities).
 
-Class definition
+
+Class definition: Create an object that contains your solver, the parameter space and all the methods
+you'd need to compute your problem.
+
 ```python
 class PINN:
     def __init__(self, n_int, n_sb, n_tb, n_out):
@@ -117,8 +125,8 @@ Residual: Boundary conditions
     ....
 ```
 
-Training loop + Plotting
 
-### TL;DR
-See code @ ...
 
+Follow this lecture series on [Deep Learning in Scientific
+Computing](https://www.youtube.com/watch?v=y6wHpRzhhkA&ab_channel=CAMLab%2CETHZ%C3%BCrich) to 
+get all the details.
