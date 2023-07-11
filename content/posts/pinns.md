@@ -52,7 +52,7 @@ how many boundary points you want to sample on, inner points, the depth of your 
 ```python
 class PINN:
     def __init__(self, n_int, n_sb, n_tb, n_out):
-        # domain extrama here: using a 2d geometry
+        # domain extrama here: using a rectangular 2d geometry
         self.domain_extrema = torch.tensor([[0, T],  # Time dimension
                                             [0, X]])  # Space dimension
         self.approximate_solution = torch.NN 
