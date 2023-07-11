@@ -9,7 +9,9 @@ Usually, you pass years learning about approximation
 theory, test functions, finite elements, C++, functional analysis, visualization libraries, parallelization. Finally,
 you put it together to solve heat or wave equations. Then, when you're more of a practitioner in industry, you fall back to using Ansys.
 In 2023 however, we can just take our good ol' reliable Pytorch and _have Adam walk the space that minimizes the
-residuals we define for a given PDE_. And: we don't even need any data. Choosing our points in a
+residuals we define for a given PDE_.
+
+And: you don't even need any external data. Choosing your points in a
 [smart manner](https://pytorch.org/docs/stable/generated/torch.quasirandom.SobolEngine.html)
 (ie. not sampling from some centered distribution), you can even deduce
 very nice bounds on convergence and precision of the solution you arrive at. Tremendous.
