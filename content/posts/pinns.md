@@ -319,6 +319,8 @@ We can add our geometry and visualize it.
 ```
 
 And we can quickly encode the numerics we need to solve the heat equation.
+Disclaimer: I'm not sure about the correctness of the gradient computation. Will probably
+change this when I understand better how tinygrad works.
 
 ```python
     def apply_initial_condition(self, input_temporal):
