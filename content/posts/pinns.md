@@ -17,7 +17,7 @@ And: you don't even need any external data. Choosing your points in a
 very nice bounds on convergence and precision of the solution you arrive at. Tremendous.
 
 Let's not talk about the hard numerical analysis terms and other concerns. I want to give an overview
-on how you can _quickly_ build solvers for instances of hard problems on your own.
+on how you can _quickly_ build solvers for instances of PDE problems on your own.
 
 ### The setup
 We start from a very common formulation of a PDE problem: Take some operator L defined on some
@@ -34,11 +34,13 @@ on how well this works on paper.
 
 I'm going to show the main ideas in somewhat Pythonic pseudocode. For details, follow [this](https://github.com/konradha/DLSC/blob/main/Pinns.ipynb)
 tutorial to build a solver for the 1D heat equation. This [collection](https://github.com/mroberto166/CAMLab-DLSCTutorials) of tutorials
-is probably a little more polished and complete.
+is probably a little more polished and complete. If you actually want to see the code running, just clone
+one of the repos I'm linking and see how the models converge to a specific analytic solution.
 
 
 ### Implementation
-Now: Roll your own PINN object. This approach may be extended to your given problem fairly quickly.
+Now: Roll your own PINN object. "PINN" is short for [Phyics-informed neural network](https://en.wikipedia.org/wiki/Physics-informed_neural_networks).
+This approach may be extended to your given problem fairly quickly
 (ie. another PDE or maybe an inverse problem by introducing another neural net that approximates your
 parameter ... see the lecture I've linked below for more possibilities).
 
@@ -52,7 +54,7 @@ how many boundary points you want to sample on, inner points, the depth of your 
 ```python
 class PINN:
     def __init__(self, n_int, n_sb, n_tb, n_out):
-        # domain extrama here: using a rectangular 2d geometry
+        # domain extrema here: using a rectangular 2d geometry
         self.domain_extrema = torch.tensor([[0, T],  # Time dimension
                                             [0, X]])  # Space dimension
         self.approximate_solution = torch.NN 
@@ -109,8 +111,8 @@ can become inconvenient. Thus I highly recommend to visualize your sample and yo
 ```
 
 
-Now that we've got the geometry out of the way, we can compute what our model should look
-like at the boundary. Here, we can either immediately return a residual for our model to 
+Now that we've got the geometry out of the way, we can compute what our model should converge to
+at the boundary. Here, we can either immediately return a residual for our model to 
 optimize later on. Or we just return our model's output for the boundary as is done
 in `compute_loss` below.
 We will maybe have to compute gradients for the boundary. It's nice to have all of this in a 
@@ -182,10 +184,200 @@ which is chosen arbitrarily such that we solve in the direction of the boundary 
 
 
 
+### A quick example
+
+To exemplify how quickly you can adapt this, I tried to build this entire flow using
+[tinygrad](https://github.com/tinygrad/tinygrad). Let's quickly define a dense model.
+
+
+```python
+class Net:
+    def __init__(self, in_channels=1, out_channels=1, num_layers=5, dims=4):
+        self.in_channels  = in_channels
+        self.out_channels = out_channels
+        self.num_layers   = num_layers
+        self.dims         = dims
+
+        self.input_layer  = Linear(in_channels, dims)
+        self.output_layer = Linear(dims, out_channels)
+
+        self.activation   = Tensor.tanh
+        self.layers       = [Linear(dims, dims, bias=False,) for _ in range(self.num_layers)]
+
+
+    def __call__(self, x: Tensor, transform = None):
+        if transform is None:
+            return self.forward(x)
+        raise NotImplementedError("No-transform case not handled yet")
+
+    def forward(self, x):
+        x = self.activation(self.input_layer(x))
+        for l in self.layers:
+            x = self.activation(l(x))
+        return self.output_layer(x)
+```
+
+Now, the PINN model definition flows easily from our existing knowledge of Pytorch.
+We use a very simple dense model to approximate the 1+1d heat equation on a rectangular domain. See
+the notebooks linked above for comparison.
+
+```python
+class PINN:
+    def __init__(self, n_interior, n_boundary, n_layers=7, n_dim=8):
+        # 2d geometry, heat equation
+        self.approximate_solution = Net(in_channels=2, out_channels=1, num_layers=n_layers, dims=n_dim)
+        self.domain_extrema       = Tensor([[0., 0.1], [-1., 1.]])
+
+        self.n_interior = n_interior
+        self.n_boundary = n_boundary
+        self.Lambda     = 10
+
+        self.spatial_boundary_sample, self.temporal_boundary_sample, self.interior_sample = \
+                self.assemble_dataset()
+
+    @staticmethod
+    def convert(x: Tensor, a: float, b: float):
+        # need to adapt to tinygrad's Uniform sampling mechanism
+        # ie. the usual pullback looks a little different
+        return .5 * (b-a) * (x + 1) + a
+
+
+    def assemble_dataset(self):
+        spatial_boundary_input, spatial_boundary_output   = self.add_spatial_boundary_points()
+        temporal_boundary_input, temporal_boundary_output = self.add_temporal_boundary_points()
+        interior_input, interior_output                   = self.add_interior_points()
+        return (spatial_boundary_input, spatial_boundary_output), (temporal_boundary_input, temporal_boundary_output), (interior_input, interior_output)
+```
+
+We can add our geometry and visualize it.
+
+
+```python
+    def add_spatial_boundary_points(self):
+        x0 = self.domain_extrema[1, 0]
+        xL = self.domain_extrema[1, 1]
+
+        t0 = self.domain_extrema[0, 0]
+        tL = self.domain_extrema[0, 1]
+
+        points_per_side = self.n_boundary // 2
+        t_values_0 = self.convert(Tensor.uniform(points_per_side,), t0, tL)
+        x_values_0 = Tensor.ones(points_per_side) * x0
+        input_spatial_boundary_0 = Tensor.stack((t_values_0, x_values_0), 1)
+
+        t_values_L = self.convert(Tensor.uniform(points_per_side,), t0, tL)
+        x_values_L = Tensor.ones(points_per_side) * xL
+        input_spatial_boundary_L = Tensor.stack((t_values_L, x_values_L), 1)
+
+        # redundancy for more readable training loop
+        output_spatial_boundary_0 = Tensor.zeros(points_per_side)
+        output_spatial_boundary_L = Tensor.zeros(points_per_side)
+
+        return Tensor.cat(input_spatial_boundary_0, input_spatial_boundary_L), Tensor.cat(output_spatial_boundary_0, output_spatial_boundary_L)
+
+
+    def add_temporal_boundary_points(self):
+        x0 = self.domain_extrema[1, 0]
+        xL = self.domain_extrema[1, 1]
+
+        t0 = self.domain_extrema[0, 0]
+        tL = self.domain_extrema[0, 1]
+
+        x_values_0 = self.convert(Tensor.uniform(self.n_boundary), x0, xL)
+        t_values_0 = Tensor.ones(self.n_boundary) * t0
+
+        input_temporal_boundary  = Tensor.stack((t_values_0, x_values_0), 1)
+        output_temporal_boundary = - Tensor.sin(np.pi * x_values_0)
+
+        return input_temporal_boundary, output_temporal_boundary
+
+
+    def add_interior_points(self):
+        x0 = self.domain_extrema[1, 0]
+        xL = self.domain_extrema[1, 1]
+
+        t0 = self.domain_extrema[0, 0]
+        tL = self.domain_extrema[0, 1]
+
+        t_values_interior = self.convert(Tensor.uniform(self.n_interior), t0, tL)
+        x_values_interior = self.convert(Tensor.uniform(self.n_interior), x0, xL)
+
+        u_values_interior = Tensor.zeros_like(x_values_interior)
+
+        return Tensor.stack((t_values_interior, x_values_interior), 1), u_values_interior
+
+
+    def show_sample(self):
+        x_in, x_out = p.add_spatial_boundary_points()
+        t_in, t_out = p.add_temporal_boundary_points()
+        interior_in = p.add_interior_points()
+
+        plt.scatter(x_in[:, 1].cpu().numpy(), x_in[:, 0].cpu().numpy(), )
+        plt.scatter(t_in[:, 1].cpu().numpy(), t_in[:, 0].cpu().numpy(), )
+        plt.scatter(interior_in[:, 1].cpu().numpy(), interior_in[:, 0].cpu().numpy(), )
+        plt.show()
+```
+
+And we can quickly encode the numerics we need to solve the heat equation.
+
+```python
+    def apply_initial_condition(self, input_temporal):
+        u_pred_temporal = self.approximate_solution(input_temporal)
+        return u_pred_temporal
+
+    def apply_spatial_condition(self, input_spatial):
+        u_pred_spatial = self.approximate_solution(input_spatial)
+        return u_pred_spatial
+
+    def compute_pde_residual(self, input_interior):
+
+        input_interior.requires_grad = True
+        x = input_interior[:, 1]
+        t = input_interior[:, 0]
+        x.requires_grad = True; t.requires_grad = True
+        inp = Tensor.stack((t, x), 1)
+        u = self.approximate_solution(inp)
+
+        u_sum = u.sum()
+        u_sum.backward()
+        # get first order derivatives using single backward pass
+        grad_u_x = x.grad
+        grad_u_t = t.grad
+
+        # "scalarize" grad_u_x
+        intermediate_grad_u_x = grad_u_x.sum()
+        intermediate_grad_u_x.backward()
+        grad_u_xx = intermediate_grad_u_x
+
+        residual = grad_u_t - grad_u_xx
+        return residual.realize()
+
+    def compute_loss(self, spatial_boundary_input, spatial_boundary_output, temporal_boundary_input,
+            temporal_boundary_output, interior_input, interior_output):
+        u_pred_spatial  = self.apply_spatial_condition(spatial_boundary_input)
+        u_pred_temporal = self.apply_initial_condition(temporal_boundary_input)
+
+        residual_interior = self.compute_pde_residual(interior_input)
+        residual_spatial  = u_pred_spatial - spatial_boundary_output
+        residual_temporal = u_pred_temporal - temporal_boundary_output
+
+        loss_boundary = self.Lambda * ((residual_spatial.abs()).mean() ** 2 + (residual_temporal.abs()).mean() ** 2)
+        loss_interior = (residual_interior.abs()).mean() ** 2
+        loss = loss_boundary + loss_interior
+
+        return loss
+``` 
+
+And we're done. This can now be tuned to fully converge to the analytical solution.
+
+
+
+
+
 ### Final thoughts
 There's lots to discover in this new world of SciML: Solving non-deterministic models in high dimensions,
-operator learning, foundation models ... We're seeing the fruits of an intense decade of investment in ML
-research, enabling us to solve hard problems on retail machines in no time. 
+operator learning, foundation models, PDE-constrained optimization ... We're seeing the fruits of an intense
+decade of investment in ML research, enabling us to solve hard problems on retail machines in no time. 
 
 
 
