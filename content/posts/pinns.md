@@ -387,3 +387,6 @@ decade of investment in ML research, enabling us to solve hard problems on retai
 Thanks to Professor Mishra and colleagues, you can follow the lecture series on [Deep Learning in Scientific
 Computing](https://www.youtube.com/watch?v=y6wHpRzhhkA&ab_channel=CAMLab%2CETHZ%C3%BCrich) to 
 get _all_ the details.
+
+_Note (July 14th 2023)_: Click [here](https://github.com/konradha/dlsc_project23) for a little more advanced
+implementation.
