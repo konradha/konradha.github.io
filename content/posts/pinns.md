@@ -39,7 +39,7 @@ one of the repos I'm linking and see how the models converge to a specific analy
 
 
 ### Implementation
-Now: Roll your own PINN object. "PINN" is short for [Phyics-informed neural network](https://en.wikipedia.org/wiki/Physics-informed_neural_networks).
+Now: Roll your own PINN object. "PINN" is short for [Phyics-informed neural network](https://benmoseley.blog/my-research/so-what-is-a-physics-informed-neural-network/).
 This approach may be extended to your given problem fairly quickly
 (ie. another PDE or maybe an inverse problem by introducing another neural net that approximates your
 parameter ... see the lecture I've linked below for more possibilities).
