@@ -5,8 +5,8 @@ draft: false
 ---
 Some articles I'm currently reading (WIP):
 
-[physicists and FORTRAN](https://www.moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/)
-[C++](https://queue.acm.org/detail.cfm?id=3372264)
-[HPC + FORTRAN](https://queue.acm.org/detail.cfm?id=1820518)
-[about OCaml](https://baturin.org/docs/ocaml-faq/)
-[OCaml performance](http://ocamlverse.net/content/optimizing_performance.html)
+- [physicists and FORTRAN](https://www.moreisdifferent.com/2015/07/16/why-physicsts-still-use-fortran/)
+- [C++](https://queue.acm.org/detail.cfm?id=3372264)
+- [HPC + FORTRAN](https://queue.acm.org/detail.cfm?id=1820518)
+- [about OCaml](https://baturin.org/docs/ocaml-faq/)
+- [OCaml performance](http://ocamlverse.net/content/optimizing_performance.html)
