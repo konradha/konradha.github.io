@@ -25,7 +25,8 @@ or else you're introducing a race condition.
 
 Here's a tedious but I'd say somewhat safe way to go about parallelizing across
 the grid: Assume your grid has dimensions L x L x L: Fix indices i + t * 4 for each
-thread t. Then, each thread can comfortably traverse its own 2d slice of the grid in
+thread t. Then, each thread can comfortably traverse its own 2d slice
+with (j, k) in [0, L) x [0, L) of the grid in
 parallel to all other threads t'. Unfortunately, this implies you would have to
 do this 4 times (modulo L). Hence you would need to introduce about 4 barriers
 for each sweep you take. You want to minimize waits and thread spawns, so running
