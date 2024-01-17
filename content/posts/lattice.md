@@ -1,7 +1,7 @@
 ---
 title: "A lattice"
 date: 2023-11-20T19:51:29+01:00
-draft: false
+draft: true
 ---
 
 Exploring Monte Carlo simulations of certain physical systems.

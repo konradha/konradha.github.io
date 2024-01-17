@@ -1,7 +1,7 @@
 ---
 title: "Current reading list on compilers + PL"
 date: 2023-09-29T00:02:43+02:00
-draft: false
+draft: true
 ---
 Some articles I'm currently reading (WIP):
 
