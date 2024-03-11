@@ -8,8 +8,6 @@ theme = "paper"
 
 [params]
   color = 'wheat'
-  twitter = 'konradha_'
-  github = 'konradha'
 
 [markup]
   [markup.goldmark]
