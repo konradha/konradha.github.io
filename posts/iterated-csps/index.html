@@ -1,0 +1,131 @@
+<!doctype html><html class="not-ready text-sm lg:text-base" style=--bg:#f8f5d7 lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>T=0 in a glassy system = ? - א</title>
+<meta name=theme-color><meta name=description content="I&rsquo;ve been researching a lattice-based glassy system. The authors of this work explain a little how we find the ground state in the Hamiltonian
+$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$
+at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and how many particles are ideal per particle type, respectively. We have no external field. It assumes a fixed particle density ϱ with two types of particles, each with different (fixed) density."><meta name=author content="א"><link rel="preload stylesheet" as=style href=https://konradha.github.io/main.min.css><script defer src=https://konradha.github.io/highlight.min.js onload=hljs.initHighlightingOnLoad()></script><link rel=preload as=image href=https://konradha.github.io/theme.png><link rel=icon href=https://konradha.github.io/favicon.ico><link rel=apple-touch-icon href=https://konradha.github.io/apple-touch-icon.png><meta name=generator content="Hugo 0.123.8"><meta property="og:title" content="T=0 in a glassy system = ?"><meta property="og:description" content="I&rsquo;ve been researching a lattice-based glassy system. The authors of this work explain a little how we find the ground state in the Hamiltonian
+$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$
+at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and how many particles are ideal per particle type, respectively. We have no external field. It assumes a fixed particle density ϱ with two types of particles, each with different (fixed) density."><meta property="og:type" content="article"><meta property="og:url" content="https://konradha.github.io/posts/iterated-csps/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-03-11T11:19:54+01:00"><meta property="article:modified_time" content="2024-03-11T11:19:54+01:00"><meta itemprop=name content="T=0 in a glassy system = ?"><meta itemprop=description content="I&rsquo;ve been researching a lattice-based glassy system. The authors of this work explain a little how we find the ground state in the Hamiltonian
+$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$
+at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and how many particles are ideal per particle type, respectively. We have no external field. It assumes a fixed particle density ϱ with two types of particles, each with different (fixed) density."><meta itemprop=datePublished content="2024-03-11T11:19:54+01:00"><meta itemprop=dateModified content="2024-03-11T11:19:54+01:00"><meta itemprop=wordCount content="1980"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="T=0 in a glassy system = ?"><meta name=twitter:description content="I&rsquo;ve been researching a lattice-based glassy system. The authors of this work explain a little how we find the ground state in the Hamiltonian
+$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$
+at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and how many particles are ideal per particle type, respectively. We have no external field. It assumes a fixed particle density ϱ with two types of particles, each with different (fixed) density."></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://konradha.github.io/>א</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#f8f5d7".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-10rem)] max-w-3xl px-8 pb-24 pt-16 dark:prose-invert"><article><header class=mb-20><h1 class="!my-0 pb-2.5">T=0 in a glassy system = ?</h1><div class="text-sm opacity-60"><time>Mar 11, 2024</time></div></header><section><p>I&rsquo;ve been researching a <a href=https://arxiv.org/abs/2003.02872>lattice-based glassy system</a>.
+The authors of this work explain <em>a little</em> how we find the ground state in the Hamiltonian</p><p>$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$</p><p>at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and
+how many particles are ideal per particle type, respectively. We have no external field.
+It assumes a fixed particle density ϱ with two types of particles, each with different
+(fixed) density. The first type has l=3, ie. its energy is minimal if three out of its
+six neighbors are occupied. The second type has l=5.</p><p>Running a Monte Carlo simulation for this problem is quite a lenghty process. Of course,
+the main thing to do is to use local moves. That is, choose a particle at random, choose
+one of its neighboring sites and attempt to swap them using the Metropolis-Hastings
+criterion. We can magically accelerate reaching an equilibrium by introducing so-called
+swap moves: Instead of randomly choosing one of the first, randomly chosen particle&rsquo;s neighbors,
+we now choose another random particle on the lattice and attempt, again a swap move using
+the MH-criterion. Interestingly, this enhances equilibration and lets our system decorrelate
+more rapidly. Depending on system size, dynamics and temperature, this &ldquo;speedup&rdquo; can enhance
+our simulation by two to three orders of magnitude. That&rsquo;s not too shabby. It&rsquo;s a magical
+enhancement as, for now, we&rsquo;re not quite sure yet how this works so nicely in glassy systems.</p><p>But even introducing sweeps over our entire grid (ie. L³ swap trials), the authors suggest
+that to reach the ground state at T=0, we have to run the simulation for a huge number of sweeps.</p><p>I&rsquo;m not satisfied with this approach of just abusing compute to get a somewhat minimal state.
+Let&rsquo;s ask another question: Can we map the problem to some known structure and then
+deduce smarter algorithms? I would sure hope that we can rely on decades of statistical
+physics research to yield solid intution with regards to the type of problem we&rsquo;re dealing with.</p><p>There are other connections to be found, though. Notably, we can find a correspondence between
+graph partitioning and finding the ground state in this system. In the following I&rsquo;ll just mention
+different notions that helped arrive at the heuristic to reach the ground state in our glassy
+system. It&rsquo;s written as a stream of consciousness, don&rsquo;t expect every argument and intuition to be
+formally correct.</p><h3 id=diffusion>Diffusion</h3><p>Let&rsquo;s first talk about the <a href=https://en.wikipedia.org/wiki/Heat_equation>heat equation</a>. The applications
+of the idea of smoothing out hotter temperatures into nearby regions has manifold applications.
+Most importantly,it works without applying an external fields and just diffuses heat in the space
+we apply our initial conditions in. But what happens when we look at the microscale? Looking at the
+<a href=https://en.wikipedia.org/wiki/Langevin_equation>Langevin equation</a> is arguably most instructive to
+see why we choose Monte Carlo methods often times &ndash; it allows us to traverse the free energy landscape
+of a given system by assigning every particle in a system some acceleration to understand where it can move.</p><p>Well, what does equilibration mean in this context? In the continuous-space, continuous-time view,
+we&rsquo;re looking at solving a PDE that fully characterizes the evolution of our system. The solution space here
+is all minimal energies we can reach with the conditions and geometry we can find us in. Let&rsquo;s look at the
+discrete-space, regular domain case: Well, particles just move around at Manhattan distance of one another.
+What length-scales they find themselves in before, during and after simulating this system, may stronlgy
+inform us of what kind of problem we&rsquo;re actually dealing with.</p><p>Now, what good are these ideas for our current problem? What I&rsquo;ve found during investigations of trying to
+equilibrate the system above with local sweeps and swap MC is that we can almost always find regions in our
+glassy lattice where locally, the average temperature of each particle is higher. Surely, this can tell us
+which region is most likely to mix in the next k epochs compared to cooler regions. An idea is to guide the
+system towards a certain kind of equilibration: Maybe we can put an emphasis of averaging the energy per
+particle out, maybe it&rsquo;s a solid idea to just have locally-neighboring regions move particles locally?
+Are we better off always trying to equilibrate the higher temperature regions or is it smart to try to keep
+the regions of low temperature as small as possible to move more opportunistically in the free energy landscape?</p><p>What&rsquo;s visible is that, in our current system, there&rsquo;s a strong distinction between low and high temperatures.
+Here, we define higher temperatures as inverse temperature between zero and 1 + some delta. No matter the kind
+of equilibration you choose from a random initial configuration, this distinction will always be present in
+your simulation.</p><p>Let&rsquo;s gather some more ideas, keeping in mind our reflection on what heat does to a system.</p><h3 id=constraint-satisfaction-problems-csp-and-k-sat>Constraint satisfaction problems (CSP) and k-SAT</h3><p>What&rsquo;s a clause? What&rsquo;s constraint satisfaction?
+We&rsquo;re now going into seemingly non-related fields. We&rsquo;re lucky that truthfulness is usually binary in mathematical
+logic. Connecting two binary variables that can be either true or false is usually done using logical <code>and</code> and
+logical <code>or</code>, written as ∧ and ∨ respectively. To negate, write ¬. A clause is a collection of binary variables
+connected through these logical operators.
+Why do we care? Well, you can map lots of problems in theoretical CS into this framework. We&rsquo;re interested in two
+of them. CSP: maximizing the number of satisfied clauses in a collection of clauses that are logically connected.
+The other one is k-SAT: Satisfying a collection of fixed-size (k) clauses.
+Looking at our initial Hamiltonian: Getting to energy 0 in this Hamiltonian is equivalent to saying that
+every single particle has exactly the number of neighbors it prefers to have. If we can actually do this is part
+of a more involved process of looking at crystalline phases of the particles and their mixtures at different rates.
+What we can do is upper-bound the number of configurations that could potentially satisfy the Hamiltonian up until
+a certain energy threshold $$E_t \gt 0$$</p><p>Both CSP and k-SAT are <em>hard</em>, both are in NP. We approximate close-to-optimal solutions: People usually introduce
+energy functions that have to be minimized using Monte Carlo techniques. They closely relate to our problem,
+we&rsquo;ll get back to this later.</p><h3 id=graph-partitioning>Graph partitioning</h3><p>We can find another mapping of our problem of finding GS in our lattice glass into Computer Science.
+Let&rsquo;s look at the lattice L^k we&rsquo;re in. Due to the periodic boundary conditions we impose, we find ourselves in a
+2k-regular lattice. What&rsquo;s more is that every minimal cycle has same length, 4. This holds for k=2 and 3, but does
+it hold for all dimensions? Our problem now is that: We want to find two induced subgraphs with the following
+conditions: One 3-regular graph S and one 5-regular graph T. They don&rsquo;t need to necessarily be connected. Their
+intersection might not be empty. How do we characterize this problem?</p><p>There&rsquo;s <a href=https://none>work</a> indicating that indeed, we find ourselves in the realm of hard problems again: Finding
+a k/2-regular induced subgraph of size v/2 in a k-regular graph is, again, NP-complete. Enumerating them using
+dynamic programming is in O(n • 2^n) (at least that&rsquo;s the best one I could come up with).</p><p>We can maybe stochastically or greedily grow these graphs. But we can probably lower-bound the time we&rsquo;d actually
+need to get close to a large sample of the configuration space with some exponential integer.</p><p>This novel description however can give us something more to think about: What are now ideal geometries for the
+glassy dynamics we&rsquo;re looking for to emerge? Can we cluster / reduce our system size using some solid arguments
+from graph theory? Is there a minimal graph that shows emergent glassy behavior? Can we use these tools to gather
+more insight of what the &ldquo;glassy dynamics&rdquo; are in this system?</p><h3 id=simulated-annealing>Simulated annealing</h3><p>Can we more naturally follow the evolution of the system? One approach is to slowly decrease the temperature when in
+between Monte Carlo steps. This lets particles group and move at a higher rate in the beginning and makes the system
+much more rigid towards the end. This procedure is what&rsquo;s known as &ldquo;simulated annealing&rdquo;. Combinatorial optimization
+is a field where this type of stochastic optimization procedure has been employed widely to varying success. Seeing
+that we can map our problem to some well-defined discrete space we can certainly make use of this technique here.</p><p>It&rsquo;s interesting to see what kind of schedule is <em>good</em> or optimal for the temperature decrease. I&rsquo;d like to think
+of annealing as turning on a fridge that&rsquo;s been defrosted: Slowly getting all items to rest at fridge temperature.
+I think it&rsquo;s somewhat natural to look at this as an inverse exponential such that taking the range for our temperatures
+as a geometric series could be useful.</p><h3 id=putting-it-together>Putting it together</h3><p>Now, let&rsquo;s look at the heuristic I&rsquo;ve come up with to finally equilibrate the glassy system.
+I&rsquo;m using Python-pseudocode to make it as clear as possible.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span>nsweeps <span style=color:#f92672>=</span> <span style=color:#ae81ff>10</span> <span style=color:#f92672>**</span> <span style=color:#ae81ff>4</span>
+</span></span><span style=display:flex><span>ncool <span style=color:#f92672>=</span> nsweeps <span style=color:#f92672>//</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>nfind <span style=color:#f92672>=</span> nsweeps <span style=color:#f92672>//</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>betas <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>geomspace(<span style=color:#ae81ff>1</span> <span style=color:#f92672>-</span> delta, <span style=color:#ae81ff>20.</span>, ncool)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># cooling down close to T ~ 0</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> range(ncool):
+</span></span><span style=display:flex><span>    beta <span style=color:#f92672>=</span> betas[i] 
+</span></span><span style=display:flex><span>    num_partitions <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>choice([<span style=color:#ae81ff>2</span>, <span style=color:#ae81ff>4</span>, <span style=color:#ae81ff>8</span>, <span style=color:#ae81ff>16</span>], <span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> j <span style=color:#f92672>in</span> range(L<span style=color:#f92672>**</span> <span style=color:#ae81ff>3</span> <span style=color:#f92672>//</span> num_partitions <span style=color:#f92672>//</span> <span style=color:#ae81ff>2</span>):
+</span></span><span style=display:flex><span>        l, h <span style=color:#f92672>=</span> find_partitions(lattice, beta, num_partitions)
+</span></span><span style=display:flex><span>        coin <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>randint(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> coin:
+</span></span><span style=display:flex><span>          nonlocal_sweep_partitioned(lattice, l, h)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>else</span>:
+</span></span><span style=display:flex><span>          local_sweep_partitioned(lattice, l, h)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>beta <span style=color:#f92672>=</span> <span style=color:#ae81ff>20.</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># setting T ~ 0</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> range(nfind):
+</span></span><span style=display:flex><span>    coin <span style=color:#f92672>=</span> np<span style=color:#f92672>.</span>random<span style=color:#f92672>.</span>randint(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> coin:
+</span></span><span style=display:flex><span>        local_sweep(lattice, beta)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>else</span>:
+</span></span><span style=display:flex><span>        nonlocal_sweep(lattice, beta)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    handson_sweep(lattice, beta)
+</span></span></code></pre></div><p>Okay, what did I write down here?
+The first stage consists of repeatedly partitioning our lattice into random sizes (<code>num_partitions</code>). We repeatedly
+try to move particles using the MH-criterion, half the time purely locally, ie. only swap particles with their immediate
+neighbors, half the time try to do fully nonlocal swaps. Here we&rsquo;re free to either diffuse particles throughout the
+lattice or we try to localize the diffusion to exchange high-energy regions with low-energy regions.
+We do this for a fixed amount of time (here we&rsquo;re taking half the number of all sweeps to be part of the first stage).</p><p>The second stage is not trying to traverse the entire configuration space anymore but instead drills down on the
+&ldquo;optimal&rdquo; configuration that&rsquo;s been worked out after the first stage. We can now assume that the energy is below a
+certain threshold <code>E_t</code>, ie. there&rsquo;s a number of particles which have energy 0. We now only consider the particles
+that have energy greater than a certain threshold and try to either locally or nonlocally swap them. This now
+concentrates the possible moves. More importantly, we&rsquo;ve reduced the number of particles we touch at every optimization sweep and
+can now assume that the lattice is somewhat minimized in energy to drill down even further. Of course, we may get
+trapped in some local optimum. That&rsquo;s why for every &ldquo;handson&rdquo;-optimization we do local or nonlocal sweeps half the time
+to ensure that all lattice sites get looked at during this optimization phase.</p><p>The risk to stay trapped in a very deep local optimum is of course not zero. What we do get is that we&rsquo;re now dealing
+with 10^4 sweeps overall in this heuristic. We&rsquo;re reaching very low-energy regions however. This method needs about four
+(4) orders of magnitudes less equilibration sweeps than what the authors of the study we&rsquo;re trying to reproduce suggest.</p><p>The good part is: We can now equilibrate the glassy system quickly. We can now bound this procedure and benchmark it.
+We&rsquo;ve however introduced lots of moving parts that may influence how well we can traverse the entirety of possibilities.</p></section><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://konradha.github.io/posts/sliced_traversal/><span>Sliced traversals</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://konradha.github.io/>א</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>Theme Paper</a></footer></body></html>
