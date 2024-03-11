@@ -187,6 +187,12 @@ with 10^4 sweeps overall in this heuristic. We're reaching very low-energy regio
 The good part is: We can now equilibrate the glassy system quickly. We can now bound this procedure and benchmark it.
 We've however introduced lots of moving parts that may influence how well we can traverse the entirety of possibilities.
 
+The diffusion part is clear: Partitioning the lattice into cold and hot regions pushes our system into some sort
+of equilibrium. We fuse this idea together with our cooling procedure to slowly slow down all different partitions. We focus our MC
+procedure towards more of a CSP-type solution approximating algorithm. Ideas of graphs just more strongly inform us
+about the regularity of our geometry. All of the proposed moves respect detailed balance, only that we're biasing our
+optimization in a certain direction.
+
 
 <!----
 Algorithm / schedule to get close to GS, respecting physics
