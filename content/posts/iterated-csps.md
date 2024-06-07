@@ -192,31 +192,3 @@ of equilibrium. We fuse this idea together with our cooling procedure to slowly 
 procedure towards more of a CSP-type solution approximating algorithm. Ideas of graphs just more strongly inform us
 about the regularity of our geometry. All of the proposed moves respect detailed balance, only that we're biasing our
 optimization in a certain direction.
-
-
-<!----
-Algorithm / schedule to get close to GS, respecting physics
-1. diffusion on partitions with lowest / highest energy -- coin flips for local/nonlocal moves
-   -> speedup
-2. reaching H(config) / (rho * L ** 3) <= .4
-   -> introduce new measures
-3. concentrated SAT sweeps; nonlocal sweeps
-   -> slowing down to perform actual optimization
-4. getting to zero energy for small systems (python procedure)
-
-Some plots: (mine, in thesis then)
-- reaching GS with algorithm versus what happens just using local/nonlocal sweeps
-- varying convergence for different betas
-- crystalline phase
-- energy grid for our rho for different values of rho1, rho2 (ranges)
-
-
-### Future checkbox (all with question marks)
-- [ ] optimality of procedure
-- [ ] investigating model in higher dimensions
-- [ ] different geometries (diameter, girth, honeycomb)
-- [ ] iterated k-sat
-- [ ] simulated annealing
-- [ ] fully investigating PT for glassy systems
-- [ ] 
---->
