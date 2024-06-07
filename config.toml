@@ -3,8 +3,8 @@ languageCode = "en"
 DefaultContentLanguage = "en"
 ignoreErrors = ["error-remote-getjson"]
 
-#title = 'א'
-theme = "holy"
+title = 'א'
+theme = "photophobia"
 
 [params]
   color = 'wheat'
