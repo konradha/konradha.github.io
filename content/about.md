@@ -17,4 +17,4 @@ Come say hi at konradha `email_symbol` yahoo.com.
 
 <p></p>
 
-<img src="/perso1.jpeg" style="width:35vw">
+<img src="/perso1.jpeg" style="width:20vw">
