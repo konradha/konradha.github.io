@@ -8,7 +8,7 @@ I'm Konrad. I write on niche things of interest to me.
 
 Previously I've worked on
 - simulating toy models representing glasses
-- compilers at AMD and QuantStack
+- compilers at AMD, QuantStack and Axelera AI
 - models for embedded serverless programming
 
  
