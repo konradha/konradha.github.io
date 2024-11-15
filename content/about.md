@@ -5,6 +5,9 @@ author = "konradha"
 +++
 
 physics, hacking
+
+
+I like getting mail. Say hello via `tmphpc-hello@yahoo.com`
 <!---
 
 I'm Konrad. I write on niche things of interest to me.
