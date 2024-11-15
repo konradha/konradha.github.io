@@ -35,13 +35,22 @@ and correct the error in a given word.&lt;/p>
 &lt;ol start="0">
 &lt;li>
 &lt;p>Generate the parity check matrix &lt;em>H&lt;/em> for one of the operators
-(X-type or Z-type) over mod 2.&lt;/p></description></item><item><title>Hello World</title><link>https://konradha.github.io/posts/hello-world/</link><pubDate>Sun, 09 Oct 2022 15:47:02 +0200</pubDate><guid>https://konradha.github.io/posts/hello-world/</guid><description/></item><item><title>About</title><link>https://konradha.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konradha.github.io/about/</guid><description>&lt;p>I&amp;rsquo;m Konrad. I write on niche things of interest to me.&lt;/p>
-&lt;p>Previously I&amp;rsquo;ve worked on&lt;/p>
-&lt;ul>
-&lt;li>simulating toy models representing glasses&lt;/li>
-&lt;li>compilers at AMD, QuantStack and Axelera AI&lt;/li>
-&lt;li>models for embedded serverless programming&lt;/li>
-&lt;/ul>
-&lt;p>Come say hi at konradha &lt;code>email_symbol&lt;/code> yahoo.com.&lt;/p>
+(X-type or Z-type) over mod 2.&lt;/p></description></item><item><title>Hello World</title><link>https://konradha.github.io/posts/hello-world/</link><pubDate>Sun, 09 Oct 2022 15:47:02 +0200</pubDate><guid>https://konradha.github.io/posts/hello-world/</guid><description/></item><item><title>About</title><link>https://konradha.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konradha.github.io/about/</guid><description>&lt;p>physics, hacking&lt;/p>
+&lt;!---
+
+I'm Konrad. I write on niche things of interest to me.
+
+Previously I've worked on
+- simulating toy models representing glasses
+- compilers at AMD, QuantStack and Axelera AI
+- models for embedded serverless programming
+
+ 
+
+Come say hi at konradha `email_symbol` yahoo.com.
+
 &lt;p>&lt;/p>
-&lt;img src="https://konradha.github.io/perso2.jpeg" style="width:12vw"></description></item></channel></rss>
+
+&lt;img src="https://konradha.github.io/perso2.jpeg" style="width:12vw">
+
+---!></description></item></channel></rss>

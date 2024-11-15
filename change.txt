@@ -1,1 +1,0 @@
-for f in $(find . -type f -name "*.html"); do cat gcode.txt >> "${f}"; done
