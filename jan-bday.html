@@ -1,0 +1,34 @@
+<html>
+    <body>
+
+        <p> Happy Bday mein gutster! Dieses Python Skript
+        ruft ein Quantum Random Number Generator ab und generiert dir Lottozahlen
+        für Swissloto (frag mich warum deine Odds so viel geiler sind dort). 
+        Ich wünsch dir alles Gute und vor allem -- GLÜCK! </p>
+
+        <pre><code>
+        import requests as re
+
+        def get_one_hex():
+            url = "https://qrng.anu.edu.au/wp-content/plugins/colours-plugin/get_one_hex.php"
+            data = re.get(url)
+            return int(data.text, 16)
+        
+        if __name__ == '__main__':
+            winners = set()
+            while len(winners) < 6:
+                num = get_one_hex()
+                actual_num = (num % 42) + 1
+                if actual_num in winners: continue
+                winners.add(actual_num)
+        
+            assert len(winners) == 6
+            final_num = (get_one_hex() % 6) + 1
+        
+            print(f"Your winning numbers are: {winners} with extra {final_num}")
+
+        </code></pre>
+    </body>
+
+
+</html>
