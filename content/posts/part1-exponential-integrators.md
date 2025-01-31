@@ -1,5 +1,5 @@
 ---
-title: "Exponential Integrators for PDEs"
+title: "Exponential Integrators for PDEs (Part 1)"
 date: 2025-01-31T15:15:24+01:00
 draft: false
 ---
