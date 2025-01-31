@@ -6,8 +6,8 @@ ignoreErrors = ["error-remote-getjson"]
 title = 'א'
 theme = "hugo-paper"
 
-#[params]
-#  color = 'wheat'
+[params]
+  color = 'wheat'
 
 [markup]
   [markup.goldmark]
