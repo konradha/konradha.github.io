@@ -1,7 +1,7 @@
 ---
 title: "Exponential Integrators for PDEs"
 date: 2025-01-31T15:15:24+01:00
-draft: true
+draft: false
 ---
 
 This is the first one of a sequence of posts during which we'll work through
@@ -81,7 +81,7 @@ there are more, maybe better integrators. Assume a general time-dependent proble
 $$u\_{tt} + A u = g\left(u\right)$$
 
 where $A$ is a linear operator and $g$ is a constant inhomogeneity, we can rely on [Hairer, Lubich, Grimm's and
-friend's work](). It stems from considerations of the [variation of constants
+friend's work](https://ludwiggauckler.github.io/habil-web.pdf)[PDF]. It stems from considerations of the [variation of constants
 formula](https://en.wikipedia.org/wiki/Variation_of_parameters), where we can express the update -- given
 $L$ is a sufficiently stiff operator such that we need such an involved integrator -- as follows
 
@@ -91,7 +91,7 @@ g\left( \phi \left(\tau \Omega \right) u\_{n} \right)$$
 where $\psi$ and $\phi$ are appropriately chosen _filter functions_ and $\Omega^2= A$.
 
 Okay, great, we have a nice exponential integrator for systems involving $u\_{tt}$. And [we can even show that it
-performs really well compared to Stormer-Verlet]() (under the right constraints).
+performs really well compared to Stormer-Verlet](TODO) (under the right constraints).
 
 
 ##### What if our model does NOT evolve in $\_{tt}$, though?
@@ -106,7 +106,7 @@ $$u(\tau) = \exp\left(-i \tau H\right) u\_0$$
 which we see is already problematic as for us, $H = \Delta + |u|^2$. How would we evaluate this function?
 The [BCH formula](https://en.wikipedia.org/wiki/Baker%E2%80%93Campbell%E2%80%93Hausdorff_formula) already tells us
 that we can't arbitrarily switch order of application of operators here. Not cool. What else is there? Well,
-instead of trying to run $u(t + \tau) = \exp\left(-i \tau H\right) u(t)$, we could split out Hamiltonian into
+instead of trying to run $u(t + \tau) = \exp\left(-i \tau H\right) u(t)$, we could split our Hamiltonian into
 $$H = L + N$$ in terms of linear and nonlinear operators. That way, we can define another _symplectic_ integrator
 
 $$H(-i\tau) = N(-i\tau/2) \cdot L(-i\tau) \cdot N(-i\tau/2) + \mathcal{O} \left(\tau^3\right)$$
@@ -133,8 +133,46 @@ in finite differences as well. People love to use their spectral methods, but th
 that very few natural domain really show us this highly regular periodic behavior. Hm.
 
 
-Finite differences matrices for a square domain are computed quickly. They have nice structure which we can exploit
-when we're into optimizing matrix vector multiplications.
+Finite differences matrices for a square domain are computed quickly. They have nice structure one can exploit.
+More on that later.
+
+Looking at our integrators for the SGE and the NLSE, we can quickly observe that the linear operator L is
+what we need to discretize here.
+
+The usual formulation is the first-order 5-point stencil
+
+$$u^n_{i, j} = \frac{u^n_{i+1, j} - 2 u^n_{i, j} + u^n_{i-1, j}}{h\_x^2} + \frac{u^n_{i, j+1} - 2 u^n_{i, j} + u^n_{i, j-1}}{h\_y^2}$$
 
 
+which we can also very concisely express as a np "kernel":
 
+```python
+def u_xx_yy(buf, a, dx, dy):
+    uxx_yy = buf
+    uxx_yy[1:-1, 1:-1] = (
+        (a[2:, 1:-1] + a[:-2, 1:-1] - 2 * a[1:-1, 1:-1]) / (dx ** 2) +
+        (a[1:-1, 2:] + a[1:-1, :-2] - 2 * a[1:-1, 1:-1]) / (dy ** 2)
+    )
+    return uxx_yy
+```
+
+Let's assume, for simplicity that our domain is $[-L\_x, L\_x]^2$ discretized with $n\_x$, $n\_y$ points.
+For no-flux, homogeneous von-Neumann boundary conditions: $\frac{\partial u}{\partial \vec{n}} = 0$.
+Discretizing along the Cartesian x-y axis as $(n\_x, n\_y)$ yields a sparse matrix which is triadiagonal with
+2 bands at the diagonals $+/- n\_x$. 
+
+
+#### What could be done
+This is all very nice with some very simple building blocks. Of course, to get predictably good behavior for our
+numerical methods we'd like to employ finite elements or -- even better -- finite volume methods. The latter give
+us access to actual flow and energy control on a granular level impossible when employing finite differences. It
+however also implies lots of work considering building up the related sparse systems. We'll leave that for another
+day. We also haven't touched on spectral methods and any of the deeper details of IST, integrable systems
+and solving Riemann-Hilbert Problems. This we'll leave for another day as well.
+
+
+#### Next time
+We've looked at some fairly basic methods and gained a preliminary understanding of integrable systems. In the next part
+we'll be exploring some of the technical difficulties we'll have to come up with solutions for before implemementing
+any advanced kernel-based methods. For instance, how do we build sparse matrices we can use further down the line?
+How do we compute matrix functions, even moreso trigonometric matrix functions?
