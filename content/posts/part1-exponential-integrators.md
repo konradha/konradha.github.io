@@ -4,6 +4,8 @@ date: 2025-01-31T15:15:24+01:00
 draft: false
 ---
 
+_Disclaimer: Lots of sources are missing here. Will be added in the future._
+
 This is the first one of a sequence of posts during which we'll work through
 efficiently writing a simple finite differences simulation. We'll touch on some physics,
 some numerical methods, some C++, some CUDA. Eventually we'll see some pretty animations.
