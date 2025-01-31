@@ -4,7 +4,7 @@ DefaultContentLanguage = "en"
 ignoreErrors = ["error-remote-getjson"]
 
 title = 'א'
-theme = "paper"
+theme = "hugo-paper"
 
 #[params]
 #  color = 'wheat'
@@ -24,3 +24,9 @@ theme = "paper"
 [services]
   [services.twitter]
     disableInlineCSS = true
+
+#[frontmatter]
+#  lastmod = ['lastmod', ':git', ':fileModTime', ':default']
+#
+#[params]
+#  mainSections = ['posts']

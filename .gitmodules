@@ -1,12 +1,1 @@
-[submodule "themes/hugo-paper"]
-	path = themes/hugo-paper
-	url = git@github.com:nanxiaobei/hugo-paper.git
-[submodule "themes/paper"]
-	path = themes/paper
-	url = https://github.com/nanxiaobei/hugo-paper
-[submodule "themes/holy"]
-	path = themes/holy
-	url = https://github.com/serkodev/holy.git
-[submodule "themes/photophobia"]
-	path = themes/photophobia
-	url = https://github.com/setsevireon/photophobia.git
+
