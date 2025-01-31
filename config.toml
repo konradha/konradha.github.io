@@ -24,9 +24,3 @@ theme = "hugo-paper"
 [services]
   [services.twitter]
     disableInlineCSS = true
-
-#[frontmatter]
-#  lastmod = ['lastmod', ':git', ':fileModTime', ':default']
-#
-#[params]
-#  mainSections = ['posts']
