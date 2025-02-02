@@ -126,7 +126,7 @@ told us to never employ finite differences to evolve the Schrödinger equation. 
 "embarrassed" in that context.
 
 
-Anyway. We'll look at finite differences for out 2 + 1 dimensional system now. It's a method simple enough for us
+Anyway. We'll look at finite differences for our 2 + 1 dimensional system now. It's a method simple enough for us
 to just neglect meshing and other considerations. It's one part of the discretization we can easily[\*] exchange.
 
 
