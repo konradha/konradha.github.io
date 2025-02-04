@@ -17,13 +17,6 @@ integration in the temporal dimension, ie. (short form here)
 
 $$u(t + \tau) \approx \exp(\tau A) u(t)$$
 
-
-We're in the business of computing matrix functions for general discrete Laplacians.
-Computing the Taylor expansion should be fairly easy, right? Turns out this has some
-issues. For instance, it converges terribly. Doing 100+ matmuls isn't too difficult
-especially if $A$ stays constant. The problem, however, gets worse.
-
-
 Let's look at what [Scipy does](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.expm.html).
 Relying on Higham's and Al-Mohy's work it states
 > essentially a Pade approximation with a variable order that is decided based on the array data
@@ -43,7 +36,9 @@ Computing the k-th power of such a matrix won't preserve the sparsity pattern ho
 expanding $\exp\left(\tau A\right) = \sum\_{k=0}^{\infty} \frac{\left(\tau A\right)^{k}}{k!} $
 is, in general, dense. As an aside, $\bar{\Delta}^{-1}$ will, in general, not be dense either.
 One can observe this fact by looking at the spectrum of $\bar{\Delta}$ and how the its inverse
-would decay.
+would decay. We can derive a closed-form solution to $A - \lambda I = 0$ where $A = \bar{\Delta}$
+and reason from this result.
+
 
 So, well, if we don't want to actually have a huge not-so-sparse object in memory to compute for
 every time step -- is it actually feasible?
@@ -59,10 +54,10 @@ $$\mathcal{K}\_l := \text{span}\[u, Au, ... A^{l-1} u \]$$
 
 It's a richly developed theory in numerical linear algebra to give us some background on the question:
 If A is sparse, difficult to handle -- how can we nicely approximate
-$f(tA) u$ without making too many "bad decisions"?
+$f(tA) u$ without making too many "bad decisions" in terms of performance and correctness?
 
 Applying the sparse matrix-vector products here yields something that looks similar to
-what the above span offers. However: To be sure that we can actually use this we need to come up with
+what the above span offers. However: To be sure that we can actually use this, we need to come up with
 a procedure that can generate a basis for this Krylov space. Ie. for any element in our newly-built basis $\mathcal{B}$
 we require something like $\langle v\_i, v\_j \rangle = 0$ for $i \neq j, v\_i \in \mathcal{B}$.
 
@@ -71,11 +66,11 @@ That's what the iterations related to Arnoldi and Lanczos processes are about.
 #### Arnoldi iterations
 
 Originally, this type of process had been constructed to approximate an inverse computation that arose often
-in the earlier days of scientific computing. Well, it still arises, historically it just from that area.
+in the earlier days of scientific computing. Well, it still arises, historically it's just from that area.
 
 $$\left(\lambda I - A\right)^{-1} v$$
 
-Ie. inverting a matrix was the main interest for this method.
+ie. approximating the inverse of a matrix was the main interest for this method.
 The iteration finds matrices $V\_m, H\_m$. It might also have to find a normalization factor $\beta$ to correctly
 project into the actual space we can find $A$ in, more on that later.
 
@@ -137,7 +132,7 @@ procedure. Let's see what this finally looks like in practice.
 #### Implementation
 
 We'll be making use of Eigen here. Observe the specialized function calls
-for this complex-type procedure.
+for this complex-type procedure (ie the calls to `adjoint()`).
 
 ```cpp
 template <typename Float>
