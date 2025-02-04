@@ -1,5 +1,5 @@
 ---
-title: "Exponential Integrators for PDEs (Part 1)"
+title: "Exponential Integrators for PDEs"
 date: 2025-01-31T15:15:24+01:00
 draft: false
 ---
@@ -111,7 +111,7 @@ that we can't arbitrarily switch order of application of operators here. Not coo
 instead of trying to run $u(t + \tau) = \exp\left(-i \tau H\right) u(t)$, we could split our Hamiltonian into
 $$H = L + N$$ in terms of linear and nonlinear operators. That way, we can define another _symplectic_ integrator
 
-$$H(-i\tau) = N(-i\tau/2) \cdot L(-i\tau) \cdot N(-i\tau/2) + \mathcal{O} \left(\tau^3\right)$$
+$$\exp(-i\tau H) = \exp\left(N(-i\tau/2) \cdot L(-i\tau) \cdot N(-i\tau/2) \right) + \mathcal{O} \left(\tau^3\right)$$
 
 In practice for the NLSE this looks like
 
