@@ -1,6 +1,6 @@
 ---
 title: "Computing Matrix Functions"
-date: 2025-02-04T18:54:15+01:00
+date: 2025-02-04T18:00:15+01:00
 draft: false
 ---
 
