@@ -10,7 +10,7 @@ integration in the temporal dimension, ie. (short form here)
 $$u(t + \tau) \approx \exp(\tau A) u(t)$$"><meta name=author content="א"><link rel="preload stylesheet" as=style href=https://konradha.github.io/main.min.css><link rel=preload as=image href=https://konradha.github.io/theme.png><script defer src=https://konradha.github.io/highlight.min.js onload=hljs.initHighlightingOnLoad()></script><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]],displayMath:[["$$","$$"],["\\[","\\]"]],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:["script","noscript","style","textarea","pre"]}}</script><script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js async></script><link rel=icon href=https://konradha.github.io/favicon.ico><link rel=apple-touch-icon href=https://konradha.github.io/apple-touch-icon.png><meta name=generator content="Hugo 0.143.1"><meta itemprop=name content="Computing Matrix Functions"><meta itemprop=description content="This is the second part of a series of posts exploring how to make exponential integrators fast.
 In our previous exploration we came to understand what “nice” integrators for integrable systems can look like. How does one actually compute these trigonometric matrix functions in practice?
 Let’s reformulate our current issue as: We want to compute an update for our numerical integration in the temporal dimension, ie. (short form here)
-$$u(t + \tau) \approx \exp(\tau A) u(t)$$"><meta itemprop=datePublished content="2025-02-04T18:00:15+01:00"><meta itemprop=dateModified content="2025-02-04T18:00:15+01:00"><meta itemprop=wordCount content="1533"><meta property="og:url" content="https://konradha.github.io/posts/part2-computing-matrix-functions/"><meta property="og:site_name" content="א"><meta property="og:title" content="Computing Matrix Functions"><meta property="og:description" content="This is the second part of a series of posts exploring how to make exponential integrators fast.
+$$u(t + \tau) \approx \exp(\tau A) u(t)$$"><meta itemprop=datePublished content="2025-02-04T18:00:15+01:00"><meta itemprop=dateModified content="2025-02-04T18:00:15+01:00"><meta itemprop=wordCount content="1487"><meta property="og:url" content="https://konradha.github.io/posts/part2-computing-matrix-functions/"><meta property="og:site_name" content="א"><meta property="og:title" content="Computing Matrix Functions"><meta property="og:description" content="This is the second part of a series of posts exploring how to make exponential integrators fast.
 In our previous exploration we came to understand what “nice” integrators for integrable systems can look like. How does one actually compute these trigonometric matrix functions in practice?
 Let’s reformulate our current issue as: We want to compute an update for our numerical integration in the temporal dimension, ie. (short form here)
 $$u(t + \tau) \approx \exp(\tau A) u(t)$$"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-02-04T18:00:15+01:00"><meta property="article:modified_time" content="2025-02-04T18:00:15+01:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Computing Matrix Functions"><meta name=twitter:description content="This is the second part of a series of posts exploring how to make exponential integrators fast.
@@ -65,6 +65,7 @@ for this complex-type procedure (ie the calls to <code>adjoint()</code>).</p><di
 </span></span><span style=display:flex><span>std<span style=color:#f92672>::</span>tuple<span style=color:#f92672>&lt;</span>Eigen<span style=color:#f92672>::</span>MatrixX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span>, Eigen<span style=color:#f92672>::</span>MatrixX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span>, Float<span style=color:#f92672>&gt;</span>
 </span></span><span style=display:flex><span>lanczos_L(<span style=color:#66d9ef>const</span> Eigen<span style=color:#f92672>::</span>SparseMatrix<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>L, <span style=color:#66d9ef>const</span> Eigen<span style=color:#f92672>::</span>VectorX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>u,
 </span></span><span style=display:flex><span>          <span style=color:#66d9ef>const</span> <span style=color:#66d9ef>uint32_t</span> m) {
+</span></span><span style=display:flex><span>
 </span></span><span style=display:flex><span>  <span style=color:#66d9ef>const</span> <span style=color:#66d9ef>uint32_t</span> n <span style=color:#f92672>=</span> L.rows();
 </span></span><span style=display:flex><span>  Eigen<span style=color:#f92672>::</span>MatrixX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span> V <span style=color:#f92672>=</span> Eigen<span style=color:#f92672>::</span>MatrixX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;::</span>Zero(n, m);
 </span></span><span style=display:flex><span>  Eigen<span style=color:#f92672>::</span>MatrixX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span> T <span style=color:#f92672>=</span> Eigen<span style=color:#f92672>::</span>MatrixX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;::</span>Zero(m, m);
@@ -76,29 +77,18 @@ for this complex-type procedure (ie the calls to <code>adjoint()</code>).</p><di
 </span></span><span style=display:flex><span>    Eigen<span style=color:#f92672>::</span>VectorX<span style=color:#f92672>&lt;</span>Float<span style=color:#f92672>&gt;</span> w <span style=color:#f92672>=</span> L <span style=color:#f92672>*</span> V.col(j);
 </span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (j <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0</span>)
 </span></span><span style=display:flex><span>      w <span style=color:#f92672>-=</span> T(j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, j) <span style=color:#f92672>*</span> V.col(j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// T(j, j) = w.dot(V.col(j)); -- real version
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    T(j, j) <span style=color:#f92672>=</span> V.col(j).adjoint() <span style=color:#f92672>*</span> w;
+</span></span><span style=display:flex><span>    T(j, j) <span style=color:#f92672>=</span> V.col(j).adjoint() <span style=color:#f92672>*</span> w;
 </span></span><span style=display:flex><span>    w <span style=color:#f92672>-=</span> T(j, j) <span style=color:#f92672>*</span> V.col(j);
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>uint32_t</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;=</span> j; i<span style=color:#f92672>++</span>) {
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// Float coeff = w.dot(V.col(i)); -- real version
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      Float coeff <span style=color:#f92672>=</span> V.col(i).adjoint() <span style=color:#f92672>*</span> w;
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// CGS
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      <span style=color:#75715e>// w -= coeff * V.col(i);
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
-</span></span><span style=display:flex><span>      <span style=color:#75715e>// MGS for better behavior
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>      w.noalias() <span style=color:#f92672>-=</span> coeff <span style=color:#f92672>*</span> V.col(i);
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Modified Gram-Schmidt orthogonalization
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>uint32_t</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;=</span> j; i<span style=color:#f92672>++</span>) {
+</span></span><span style=display:flex><span>      Float coeff <span style=color:#f92672>=</span> V.col(i).adjoint() <span style=color:#f92672>*</span> w;
+</span></span><span style=display:flex><span>      w.noalias() <span style=color:#f92672>-=</span> coeff <span style=color:#f92672>*</span> V.col(i);
 </span></span><span style=display:flex><span>    }
 </span></span><span style=display:flex><span>    T(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j) <span style=color:#f92672>=</span> w.norm();
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// use symmetry
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    T(j, j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>=</span> T(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j);
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (std<span style=color:#f92672>::</span>abs(T(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j)) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>1e-8</span>) {
-</span></span><span style=display:flex><span>      V.conservativeResize(Eigen<span style=color:#f92672>::</span>NoChange, j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>      T.conservativeResize(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>      <span style=color:#66d9ef>break</span>;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    V.col(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>=</span> w <span style=color:#f92672>/</span> T(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j);
+</span></span><span style=display:flex><span>    T(j, j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>=</span> T(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j);
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// could use early stopping \approx beta
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    V.col(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>=</span> w <span style=color:#f92672>/</span> T(j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j);
 </span></span><span style=display:flex><span>  }
 </span></span><span style=display:flex><span>  <span style=color:#66d9ef>return</span> {V, T, beta};
 </span></span><span style=display:flex><span>}
@@ -126,8 +116,8 @@ for a given vector like so</p><div class=highlight><pre tabindex=0 style=color:#
 </span></span><span style=display:flex><span>           .matrix()
 </span></span><span style=display:flex><span>           .asDiagonal() <span style=color:#f92672>*</span>
 </span></span><span style=display:flex><span>       es.eigenvectors().transpose());
-</span></span></code></pre></div><p>where we (differing from our derivation before) apply
-$$Q \left(t \exp(S_m) \right) Q^{T} $$</p><p>and then scale it back using our normalization factor $\beta$ computed during the Lanczos iteration above.
+</span></span></code></pre></div><p>where we apply
+$$Q \left(t \exp(S_m) \right) Q^{T} $$</p><p>and then scale it back using our normalization factor $\beta$ computed during the Lanczos iteration before.
 The exponential function application happens element-wise for the diagonal matrix $S$.</p><p>It&rsquo;s important to note that this function definition is not perf-ready: we allocate lots of memory for every
 function call. Ideally, when calling this repeatedly (ie. to wiggle $u(t)$ to $u(t + \tau)$), we would
 want the function to not present any obvious bottlenecks.</p><h4 id=recap>Recap</h4><p>We saw that it&rsquo;s problematic to store functions of large matrices in memory. Especially if the function is a
