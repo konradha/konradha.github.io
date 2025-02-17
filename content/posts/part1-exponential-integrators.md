@@ -99,7 +99,11 @@ performs really well compared to Stormer-Verlet](TODO) (under the right constrai
 ##### What if our model does NOT evolve in $\_{tt}$, though?
 
 
-For instance, the Alfvén or NLS equations look something like $i u\_t = ...$. Here, the solution that preserves
+For instance, the Alfvén or NLS equations look something like $i u\_t = ...$. For completeness, the NLSE looks like
+
+$$ i u\_t + (u\_{xx} + u\_{yy}) + |u|^{2} u = 0 $$ 
+
+Here, the solution that preserves
 structure (is symplectic) needs to look differently. We can make use of the fundamental solution to the NLS which
 looks like
 
@@ -146,7 +150,7 @@ The usual formulation is the first-order 5-point stencil
 $$u^n_{i, j} = \frac{u^n_{i+1, j} - 2 u^n_{i, j} + u^n_{i-1, j}}{h\_x^2} + \frac{u^n_{i, j+1} - 2 u^n_{i, j} + u^n_{i, j-1}}{h\_y^2}$$
 
 
-which we can also very concisely express as a np "kernel":
+which we can also very concisely express as a Numpy "kernel":
 
 ```python
 def u_xx_yy(buf, a, dx, dy):
