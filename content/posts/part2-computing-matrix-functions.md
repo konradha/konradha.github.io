@@ -139,6 +139,7 @@ template <typename Float>
 std::tuple<Eigen::MatrixX<Float>, Eigen::MatrixX<Float>, Float>
 lanczos_L(const Eigen::SparseMatrix<Float> &L, const Eigen::VectorX<Float> &u,
           const uint32_t m) {
+
   const uint32_t n = L.rows();
   Eigen::MatrixX<Float> V = Eigen::MatrixX<Float>::Zero(n, m);
   Eigen::MatrixX<Float> T = Eigen::MatrixX<Float>::Zero(m, m);
@@ -150,28 +151,17 @@ lanczos_L(const Eigen::SparseMatrix<Float> &L, const Eigen::VectorX<Float> &u,
     Eigen::VectorX<Float> w = L * V.col(j);
     if (j > 0)
       w -= T(j - 1, j) * V.col(j - 1);
-
-    // T(j, j) = w.dot(V.col(j)); -- real version
     T(j, j) = V.col(j).adjoint() * w;
     w -= T(j, j) * V.col(j);
 
+    // Modified Gram-Schmidt orthogonalization
     for (uint32_t i = 0; i <= j; i++) {
-      // Float coeff = w.dot(V.col(i)); -- real version
       Float coeff = V.col(i).adjoint() * w;
-      // CGS
-      // w -= coeff * V.col(i);
-
-      // MGS for better behavior
       w.noalias() -= coeff * V.col(i);
     }
     T(j + 1, j) = w.norm();
-    // use symmetry
     T(j, j + 1) = T(j + 1, j);
-    if (std::abs(T(j + 1, j)) < 1e-8) {
-      V.conservativeResize(Eigen::NoChange, j + 1);
-      T.conservativeResize(j + 1, j + 1);
-      break;
-    }
+    // could use early stopping \approx beta
     V.col(j + 1) = w / T(j + 1, j);
   }
   return {V, T, beta};
@@ -213,10 +203,10 @@ An unfortunately very dense snippet. The main action happens inside the chained 
        es.eigenvectors().transpose());
 ```
 
-where we (differing from our derivation before) apply
+where we apply
 $$Q \left(t \exp(S\_m) \right) Q^{T} $$
 
-and then scale it back using our normalization factor $\beta$ computed during the Lanczos iteration above.
+and then scale it back using our normalization factor $\beta$ computed during the Lanczos iteration before.
 The exponential function application happens element-wise for the diagonal matrix $S$.
 
 It's important to note that this function definition is not perf-ready: we allocate lots of memory for every
