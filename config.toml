@@ -21,6 +21,6 @@ theme = "hugo-paper"
     url = "/about/"
     weight = 9
 
-[services]
-  [services.twitter]
-    disableInlineCSS = true
+# [services]
+#   [services.twitter]
+#     disableInlineCSS = true
