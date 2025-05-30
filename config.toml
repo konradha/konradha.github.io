@@ -1,4 +1,4 @@
-baseURL = 'https://konradha.github.io/'
+baseURL = 'https://konradha.com/'
 languageCode = "en"
 DefaultContentLanguage = "en"
 ignoreErrors = ["error-remote-getjson"]

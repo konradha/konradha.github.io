@@ -8,7 +8,7 @@ _This is the second part of a series of posts exploring
 how to make exponential integrators fast._
 
 In our
-[previous exploration](https://konradha.github.io/posts/part1-exponential-integrators/)
+[previous exploration](https://konradha.com/posts/part1-exponential-integrators/)
 we came to understand what "nice" integrators for integrable systems can
 look like. How does one actually compute these trigonometric matrix functions in practice? 
 
