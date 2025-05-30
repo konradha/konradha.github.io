@@ -8,6 +8,7 @@ theme = "hugo-paper"
 
 [params]
   color = 'wheat'
+  math = true
 
 [markup]
   [markup.goldmark]
@@ -20,6 +21,8 @@ theme = "hugo-paper"
     name = "About"
     url = "/about/"
     weight = 9
+
+
 
 # [services]
 #   [services.twitter]
