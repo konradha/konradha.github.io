@@ -1,0 +1,13 @@
+/* Fix invisible link overlays */
+a.absolute.inset-0 {
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    text-indent: -9999px !important;
+}
+
+/* Ensure proper text display */
+h1, h2, h3 {
+    position: relative;
+    z-index: 1;
+}
