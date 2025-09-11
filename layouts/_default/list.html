@@ -6,19 +6,18 @@
 {{ end }}
 
 <!-- $pages -->
-{{ $pages := union .RegularPages .Sections }}<!---->
-{{ if .IsHome }}<!---->
-{{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}<!---->
+{{ $pages := union .RegularPages .Sections }}
+{{ if .IsHome }}
+{{ $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
 {{ end }}
 
 <!-- Articles -->
-{{ $paginator := .Paginate $pages }} {{ range $index, $page := $paginator.Pages
-}}<!---->
+{{ $paginator := .Paginate $pages }} {{ range $index, $page := $paginator.Pages }}
 
 <!-- avatar -->
-{{ if and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) }}<!---->
+{{ if and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) }}
 
-{{ $avatar_url := $.Scratch.Get "avatar_url" }}<!---->
+{{ $avatar_url := $.Scratch.Get "avatar_url" }}
 {{ if or $avatar_url site.Params.name }}
 <div class="-mt-2 mb-12 flex items-center">
   {{ if $avatar_url }}
@@ -31,7 +30,7 @@
       alt="{{ site.Params.name | default site.Title }}"
     />
   </div>
-  {{ end }}<!---->
+  {{ end }}
   {{ if site.Params.name }}
   <div>
     <div class="mb-1 mt-3 text-2xl font-medium text-black dark:text-white">
@@ -44,7 +43,7 @@
   </div>
   {{ end }}
 </div>
-{{ end }}<!---->
+{{ end }}
 
 {{ end }}
 
@@ -54,11 +53,12 @@
     >Featured</span
   >
   {{ end }}
-  <h2 class="!my-0">{{ .Title }}</h2>
+  <h2 class="!my-0">
+    <a class="block" href="{{ .Permalink }}">{{ .Title }}</a>
+  </h2>
   <time class="text-xs antialiased opacity-60"
     >{{ .Date | time.Format ":date_medium" }}</time
   >
-  <a class="absolute inset-0 text-[0]" href="{{ .Permalink }}">{{ .Title }}</a>
 </section>
 {{ end }}
 
@@ -67,13 +67,13 @@
 <nav class="mt-14 flex">
   {{ if $paginator.HasPrev }}
   <a class="btn" href="{{ $paginator.Prev.URL }}">← {{ i18n "prev_page" }}</a>
-  {{ end }}<!---->
+  {{ end }}
   {{ if $paginator.HasNext }}
   <a class="btn ml-auto" href="{{ $paginator.Next.URL }}"
     >{{ i18n "next_page" }} →</a
   >
   {{ end }}
 </nav>
-{{ end }}<!---->
+{{ end }}
 
 {{ end }}
