@@ -1,56 +1,56 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>א</title><link>https://konradha.com/</link><description>Recent content on א</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 04 Feb 2025 18:00:15 +0100</lastBuildDate><atom:link href="https://konradha.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Computing Matrix Functions</title><link>https://konradha.com/posts/part2-computing-matrix-functions/</link><pubDate>Tue, 04 Feb 2025 18:00:15 +0100</pubDate><guid>https://konradha.com/posts/part2-computing-matrix-functions/</guid><description>&lt;p>&lt;em>This is the second part of a series of posts exploring
-how to make exponential integrators fast.&lt;/em>&lt;/p>
-&lt;p>In our
-&lt;a href="https://konradha.com/posts/part1-exponential-integrators/">previous exploration&lt;/a>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>א</title><link>https://konradha.com/</link><description>Recent content on א</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 04 Feb 2025 18:00:15 +0100</lastBuildDate><atom:link href="https://konradha.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Computing Matrix Functions</title><link>https://konradha.com/posts/part2-computing-matrix-functions/</link><pubDate>Tue, 04 Feb 2025 18:00:15 +0100</pubDate><guid>https://konradha.com/posts/part2-computing-matrix-functions/</guid><description>&lt;p&gt;&lt;em&gt;This is the second part of a series of posts exploring
+how to make exponential integrators fast.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In our
+&lt;a href="https://konradha.com/posts/part1-exponential-integrators/"&gt;previous exploration&lt;/a&gt;
 we came to understand what &amp;ldquo;nice&amp;rdquo; integrators for integrable systems can
-look like. How does one actually compute these trigonometric matrix functions in practice?&lt;/p>
-&lt;p>Let&amp;rsquo;s reformulate our current issue as: We want to compute an update for our numerical
-integration in the temporal dimension, ie. (short form here)&lt;/p>
-&lt;p>$$u(t + \tau) \approx \exp(\tau A) u(t)$$&lt;/p></description></item><item><title>Exponential Integrators for PDEs</title><link>https://konradha.com/posts/part1-exponential-integrators/</link><pubDate>Fri, 31 Jan 2025 15:15:24 +0100</pubDate><guid>https://konradha.com/posts/part1-exponential-integrators/</guid><description>&lt;p>&lt;em>Disclaimer: Lots of sources are missing here. Will be added in the future.&lt;/em>&lt;/p>
-&lt;p>This is the first one of a sequence of posts during which we&amp;rsquo;ll work through
+look like. How does one actually compute these trigonometric matrix functions in practice?&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s reformulate our current issue as: We want to compute an update for our numerical
+integration in the temporal dimension, ie. (short form here)&lt;/p&gt;
+&lt;p&gt;$$u(t + \tau) \approx \exp(\tau A) u(t)$$&lt;/p&gt;</description></item><item><title>Exponential Integrators for PDEs</title><link>https://konradha.com/posts/part1-exponential-integrators/</link><pubDate>Fri, 31 Jan 2025 15:15:24 +0100</pubDate><guid>https://konradha.com/posts/part1-exponential-integrators/</guid><description>&lt;p&gt;&lt;em&gt;Disclaimer: Lots of sources are missing here. Will be added in the future.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;This is the first one of a sequence of posts during which we&amp;rsquo;ll work through
 efficiently writing a simple finite differences simulation. We&amp;rsquo;ll touch on some physics,
-some numerical methods, some C++, some CUDA. Eventually we&amp;rsquo;ll see some pretty animations.&lt;/p>
-&lt;h4 id="integrable-systems">Integrable Systems&lt;/h4>
-&lt;p>Understanding nature is hard. For instance, the Millenium prize to find analytical solutions
+some numerical methods, some C++, some CUDA. Eventually we&amp;rsquo;ll see some pretty animations.&lt;/p&gt;
+&lt;h4 id="integrable-systems"&gt;Integrable Systems&lt;/h4&gt;
+&lt;p&gt;Understanding nature is hard. For instance, the Millenium prize to find analytical solutions
 to the Navier-Stokes equation is still up for grabs. Fermion systems scale exponentially
 in the number of particles in a system. Lots of systems do not give us easy access to
-analytical or even numerical solutions we can be sure are correct.&lt;/p></description></item><item><title>T=0 in a glassy system = ?</title><link>https://konradha.com/posts/iterated-csps/</link><pubDate>Mon, 11 Mar 2024 11:19:54 +0100</pubDate><guid>https://konradha.com/posts/iterated-csps/</guid><description>&lt;p>I&amp;rsquo;ve been researching a &lt;a href="https://arxiv.org/abs/2003.02872">lattice-based glassy system&lt;/a>.
-The authors of this work explain &lt;em>a little&lt;/em> how we find the ground state in the Hamiltonian&lt;/p>
-&lt;p>$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$&lt;/p>
-&lt;p>at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and
+analytical or even numerical solutions we can be sure are correct.&lt;/p&gt;</description></item><item><title>T=0 in a glassy system = ?</title><link>https://konradha.com/posts/iterated-csps/</link><pubDate>Mon, 11 Mar 2024 11:19:54 +0100</pubDate><guid>https://konradha.com/posts/iterated-csps/</guid><description>&lt;p&gt;I&amp;rsquo;ve been researching a &lt;a href="https://arxiv.org/abs/2003.02872"&gt;lattice-based glassy system&lt;/a&gt;.
+The authors of this work explain &lt;em&gt;a little&lt;/em&gt; how we find the ground state in the Hamiltonian&lt;/p&gt;
+&lt;p&gt;$$H = \sum_{i \in L^k} n_i \left(\sum_{j \in \partial i} n_j - l_i\right)^2$$&lt;/p&gt;
+&lt;p&gt;at T=0 and k=3 with periodic boundary conditions. The terms n and l denote site occupation and
 how many particles are ideal per particle type, respectively. We have no external field.
 It assumes a fixed particle density ϱ with two types of particles, each with different
 (fixed) density. The first type has l=3, ie. its energy is minimal if three out of its
-six neighbors are occupied. The second type has l=5.&lt;/p></description></item><item><title>Sliced traversals</title><link>https://konradha.com/posts/sliced_traversal/</link><pubDate>Tue, 16 Jan 2024 14:43:25 +0100</pubDate><guid>https://konradha.com/posts/sliced_traversal/</guid><description>&lt;p>Writing Monte Carlo simulation can be a fiddly task. For one,
+six neighbors are occupied. The second type has l=5.&lt;/p&gt;</description></item><item><title>Sliced traversals</title><link>https://konradha.com/posts/sliced_traversal/</link><pubDate>Tue, 16 Jan 2024 14:43:25 +0100</pubDate><guid>https://konradha.com/posts/sliced_traversal/</guid><description>&lt;p&gt;Writing Monte Carlo simulation can be a fiddly task. For one,
 it&amp;rsquo;s sometimes hard to follow parametrizations mentioned (not explained)
 in existing literature. Sometimes, your simulation is just not saturating
-the right statistic.&lt;/p>
-&lt;p>Another thing is getting your code to run quickly to jump across orders
+the right statistic.&lt;/p&gt;
+&lt;p&gt;Another thing is getting your code to run quickly to jump across orders
 of magnitudes of domain sweeps. Depending on your algorithmic formulation you&amp;rsquo;re
 allowed to do sequential trials. Sometimes you may divide your domain into
 subdomains which exchange halos and thus you can parallelize nicely.
 Some people spend a long time trying to come up with with patterns that let
-your architecture perform sweeps in an embarrassingly parallel setting.&lt;/p></description></item><item><title>Affinity</title><link>https://konradha.com/posts/affinity/</link><pubDate>Wed, 03 Jan 2024 17:49:50 +0100</pubDate><guid>https://konradha.com/posts/affinity/</guid><description>&lt;p>You have some nested loop and you found
+your architecture perform sweeps in an embarrassingly parallel setting.&lt;/p&gt;</description></item><item><title>Affinity</title><link>https://konradha.com/posts/affinity/</link><pubDate>Wed, 03 Jan 2024 17:49:50 +0100</pubDate><guid>https://konradha.com/posts/affinity/</guid><description>&lt;p&gt;You have some nested loop and you found
 a strategy to parallelize it. You don&amp;rsquo;t introduce false sharing, race conditions,
-anything you don&amp;rsquo;t want. It looks somewhat like this when using OpenMP:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cpp" data-lang="cpp">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># pragma omp parallel for &lt;/span>&lt;span style="color:#75715e">// collapse, ...
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">for&lt;/span> (size_t i &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>; i &lt;span style="color:#f92672">&amp;lt;&lt;/span> nx; i &lt;span style="color:#f92672">+=&lt;/span> kx)
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// do work
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Do you let your OS or your OpenMP implementation decide where these threads are sitting?&lt;/p>
-&lt;p>Luckily, there are several tools that can help you explore these choices.&lt;/p></description></item><item><title>Solving PDEs using ✨Machine Learning✨</title><link>https://konradha.com/posts/pinns/</link><pubDate>Wed, 07 Jun 2023 18:57:35 +0200</pubDate><guid>https://konradha.com/posts/pinns/</guid><description>&lt;p>At university some of us choose to learn how to solve PDEs numerically.
+anything you don&amp;rsquo;t want. It looks somewhat like this when using OpenMP:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# pragma omp parallel for &lt;/span&gt;&lt;span style="color:#75715e"&gt;// collapse, ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;&lt;/span&gt;&lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; (size_t i &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;; i &lt;span style="color:#f92672"&gt;&amp;lt;&lt;/span&gt; nx; i &lt;span style="color:#f92672"&gt;+=&lt;/span&gt; kx)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#75715e"&gt;// do work
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Do you let your OS or your OpenMP implementation decide where these threads are sitting?&lt;/p&gt;
+&lt;p&gt;Luckily, there are several tools that can help you explore these choices.&lt;/p&gt;</description></item><item><title>Solving PDEs using ✨Machine Learning✨</title><link>https://konradha.com/posts/pinns/</link><pubDate>Wed, 07 Jun 2023 18:57:35 +0200</pubDate><guid>https://konradha.com/posts/pinns/</guid><description>&lt;p&gt;At university some of us choose to learn how to solve PDEs numerically.
 Usually, you pass years learning about approximation
 theory, test functions, finite elements, C++, functional analysis, visualization libraries, parallelization. Finally,
 you put it together to solve heat or wave equations. Then, when you&amp;rsquo;re more of a practitioner in industry, you fall back to using Ansys.
-In 2023 however, we can just take our good ol&amp;rsquo; reliable Pytorch and &lt;em>have Adam walk the space that minimizes the
-residuals we define for a given PDE&lt;/em>.&lt;/p></description></item><item><title>Minimum weight error correction in the surface code</title><link>https://konradha.com/posts/surface_code_note/</link><pubDate>Fri, 12 May 2023 15:38:47 +0200</pubDate><guid>https://konradha.com/posts/surface_code_note/</guid><description>&lt;p>I&amp;rsquo;ve gotten a little confused by different terminologies and complexities
+In 2023 however, we can just take our good ol&amp;rsquo; reliable Pytorch and &lt;em&gt;have Adam walk the space that minimizes the
+residuals we define for a given PDE&lt;/em&gt;.&lt;/p&gt;</description></item><item><title>Minimum weight error correction in the surface code</title><link>https://konradha.com/posts/surface_code_note/</link><pubDate>Fri, 12 May 2023 15:38:47 +0200</pubDate><guid>https://konradha.com/posts/surface_code_note/</guid><description>&lt;p&gt;I&amp;rsquo;ve gotten a little confused by different terminologies and complexities
 involved in correcting errors in the surface code so I&amp;rsquo;ve rewritten the
 MWPM-involving algorithm to better understand it. A good reference (with
-&lt;em>fast&lt;/em> accompanying library) is &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>.&lt;/p>
-&lt;p>Picture the surface code. Consider the following procedure to estimate
-and correct the error in a given word.&lt;/p>
-&lt;ol start="0">
-&lt;li>
-&lt;p>Generate the parity check matrix &lt;em>H&lt;/em> for one of the operators
-(X-type or Z-type) over mod 2.&lt;/p></description></item><item><title>Hello World</title><link>https://konradha.com/posts/hello-world/</link><pubDate>Sun, 09 Oct 2022 15:47:02 +0200</pubDate><guid>https://konradha.com/posts/hello-world/</guid><description/></item><item><title>About</title><link>https://konradha.com/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konradha.com/about/</guid><description>&lt;p>I&amp;rsquo;m Konrad. I write on things of interest to me.&lt;/p>
-&lt;p>Previously I&amp;rsquo;ve worked on compilers and computational physics.&lt;/p>
-&lt;p>I like getting mail. Say hello via &lt;code>konradha [at] yahoo.com&lt;/code>&lt;/p></description></item></channel></rss>
+&lt;em&gt;fast&lt;/em&gt; accompanying library) is &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;Picture the surface code. Consider the following procedure to estimate
+and correct the error in a given word.&lt;/p&gt;
+&lt;ol start="0"&gt;
+&lt;li&gt;
+&lt;p&gt;Generate the parity check matrix &lt;em&gt;H&lt;/em&gt; for one of the operators
+(X-type or Z-type) over mod 2.&lt;/p&gt;</description></item><item><title>Hello World</title><link>https://konradha.com/posts/hello-world/</link><pubDate>Sun, 09 Oct 2022 15:47:02 +0200</pubDate><guid>https://konradha.com/posts/hello-world/</guid><description/></item><item><title>About</title><link>https://konradha.com/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://konradha.com/about/</guid><description>&lt;p&gt;I&amp;rsquo;m Konrad. I write on things of interest to me.&lt;/p&gt;
+&lt;p&gt;Previously I&amp;rsquo;ve worked on compilers and computational physics.&lt;/p&gt;
+&lt;p&gt;I like getting mail. Say hello via &lt;code&gt;konradha [at] yahoo.com&lt;/code&gt;&lt;/p&gt;</description></item></channel></rss>
