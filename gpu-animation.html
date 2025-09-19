@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Metal Thread Layout Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+        }
+        
+        .control-group input, .control-group select {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        .viz-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .viz-panel {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            min-width: 600px;
+        }
+        
+        .viz-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+            text-align: center;
+        }
+        
+        .thread-rect {
+            stroke: #444;
+            stroke-width: 1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .thread-rect:hover {
+            stroke: #fff;
+            stroke-width: 2;
+        }
+        
+        .thread-text {
+            font-size: 10px;
+            fill: #000;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            font-weight: bold;
+        }
+        
+        .threadgroup-border {
+            fill: none;
+            stroke: #ff3838;
+            stroke-width: 3;
+            stroke-dasharray: 8,4;
+        }
+        
+        .simd-border {
+            fill: none;
+            stroke: #00ffff;
+            stroke-width: 2;
+        }
+        
+        .quad-border {
+            fill: none;
+            stroke: #ffaa00;
+            stroke-width: 1.5;
+            stroke-dasharray: 3,3;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 3px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        .info-panel {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            color: #888;
+        }
+        
+        .info-value {
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #4ecdc4;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+        
+        button:hover {
+            background: #3fb5ad;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+            <div style="background: #2a2a2a; padding: 25px; border-radius: 8px; margin-bottom: 25px; line-height: 1.6;">
+            <h2 style="color: #4ecdc4; margin-top: 0; margin-bottom: 20px;">Some Nomenclature</h2>
+            
+            <div style="margin-bottom: 25px;">
+                <p><strong>NVIDIA:</strong> 32 threads per <em>warp</em> - threads execute in lockstep with same instruction</p>
+                <p><strong>AMD:</strong> 64 threads per <em>wavefront</em> (32 on RDNA) - similar to NVIDIA but larger groups</p>
+                <p><strong>Apple Silicon:</strong> 32 threads per <em>SIMD group</em> - unified memory architecture enables efficient sharing</p>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Dispatch Mode</label>
+                <select id="dispatchMode">
+                    <option value="1d">1D Dispatch</option>
+                    <option value="2d">2D Dispatch</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Threadgroup Width</label>
+                <input type="range" id="threadgroupWidth" min="1" max="16" value="8">
+                <span id="threadgroupWidthValue">8</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Threadgroup Height</label>
+                <input type="range" id="threadgroupHeight" min="1" max="16" value="1">
+                <span id="threadgroupHeightValue">1</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Grid Width</label>
+                <input type="range" id="gridWidth" min="1" max="8" value="1">
+                <span id="gridWidthValue">1</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Grid Height</label>
+                <input type="range" id="gridHeight" min="1" max="8" value="1">
+                <span id="gridHeightValue">1</span>
+            </div>
+            
+            <div class="control-group">
+                <label>SIMD Size</label>
+                <select id="simdSize">
+                    <option value="16">16</option>
+                    <option value="32" selected>32 (Apple)</option>
+                    <option value="64">64</option>
+                </select>
+            </div>
+            
+            <button onclick="animateExecution()">Animate Thread Execution</button>
+            <button onclick="animateSimdGroups()">Animate SIMD Groups</button>
+            <button onclick="animateThreadgroups()">Animate Threadgroups</button>
+            <button onclick="resetAnimation()">Reset</button>
+        </div>
+        
+        <div class="viz-container">
+            <div class="viz-panel">
+                <div class="viz-title">Thread Grid Layout</div>
+                <svg id="gridViz" width="500" height="400"></svg>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff3838; height: 5px; border: 2px dashed #ff3838;"></div>
+                        <span>Threadgroup Boundary</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00ffff; height: 3px;"></div>
+                        <span>SIMD Group Boundary (32 threads execute in lockstep)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffaa00; height: 2px; border: 1px dashed #ffaa00;"></div>
+                        <span>Quad Group Boundary (4 threads for fragment derivatives)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="viz-panel">
+                <div class="viz-title">Thread Details</div>
+                <div class="info-panel" id="threadInfo">
+                    <div style="text-align: center; color: #888; padding: 40px;">
+                        Click on a thread to see details
+                    </div>
+                </div>
+                
+                <div class="info-panel" style="margin-top: 15px;">
+                    <div class="info-row">
+                        <span class="info-label">Total Threads:</span>
+                        <span class="info-value" id="totalThreads">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Threads per Threadgroup:</span>
+                        <span class="info-value" id="threadsPerTg">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">SIMD Groups per Threadgroup:</span>
+                        <span class="info-value" id="simdPerTg">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Quad Groups per Threadgroup:</span>
+                        <span class="info-value" id="quadPerTg">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = [];
+        let animationRunning = false;
+        
+        const colorSchemes = {
+            thread: d3.scaleSequential(d3.interpolateViridis),
+            simd: d3.scaleOrdinal(d3.schemeSet3),
+            quad: d3.scaleOrdinal(d3.schemePastel1)
+        };
+
+        function calculateThreadLayout() {
+            const dispatchMode = document.getElementById('dispatchMode').value;
+            const tgWidth = parseInt(document.getElementById('threadgroupWidth').value);
+            const tgHeight = dispatchMode === '1d' ? 1 : parseInt(document.getElementById('threadgroupHeight').value);
+            const gridWidth = parseInt(document.getElementById('gridWidth').value);
+            const gridHeight = dispatchMode === '1d' ? 1 : parseInt(document.getElementById('gridHeight').value);
+            const simdSize = parseInt(document.getElementById('simdSize').value);
+            
+            const threadsPerTg = tgWidth * tgHeight;
+            const totalThreads = threadsPerTg * gridWidth * gridHeight;
+            
+            const threads = [];
+            
+            for (let tgY = 0; tgY < gridHeight; tgY++) {
+                for (let tgX = 0; tgX < gridWidth; tgX++) {
+                    for (let localY = 0; localY < tgHeight; localY++) {
+                        for (let localX = 0; localX < tgWidth; localX++) {
+                            const linearInTg = localY * tgWidth + localX;
+                            const globalX = tgX * tgWidth + localX;
+                            const globalY = tgY * tgHeight + localY;
+                            const linearGlobal = globalY * (gridWidth * tgWidth) + globalX;
+                            
+                            const simdGroup = Math.floor(linearInTg / simdSize);
+                            const simdLane = linearInTg % simdSize;
+                            const quadGroup = Math.floor(linearInTg / 4);
+                            const quadLane = linearInTg % 4;
+                            
+                            threads.push({
+                                threadgroupPos: { x: tgX, y: tgY },
+                                localPos: { x: localX, y: localY },
+                                globalPos: { x: globalX, y: globalY },
+                                linearInTg: linearInTg,
+                                linearGlobal: linearGlobal,
+                                simdGroup: simdGroup,
+                                simdLane: simdLane,
+                                quadGroup: quadGroup,
+                                quadLane: quadLane,
+                                tgWidth: tgWidth,
+                                tgHeight: tgHeight
+                            });
+                        }
+                    }
+                }
+            }
+            
+            document.getElementById('totalThreads').textContent = totalThreads;
+            document.getElementById('threadsPerTg').textContent = threadsPerTg;
+            document.getElementById('simdPerTg').textContent = Math.ceil(threadsPerTg / simdSize);
+            document.getElementById('quadPerTg').textContent = Math.ceil(threadsPerTg / 4);
+            
+            return threads;
+        }
+
+        function renderVisualization() {
+            const threads = calculateThreadLayout();
+            currentData = threads;
+            
+            const svg = d3.select('#gridViz');
+            svg.selectAll('*').remove();
+            
+            const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+            const width = 500 - margin.left - margin.right;
+            const height = 400 - margin.top - margin.bottom;
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            if (threads.length === 0) return;
+            
+            const maxX = d3.max(threads, d => d.globalPos.x);
+            const maxY = d3.max(threads, d => d.globalPos.y);
+            
+            const totalCells = (maxX + 1) * (maxY + 1);
+            const baseCellSize = Math.min(width / (maxX + 1), height / (maxY + 1));
+            
+            let cellSize, cellPadding;
+            if (totalCells <= 64) {
+                cellSize = baseCellSize * 0.8;
+                cellPadding = cellSize * 0.2;
+            } else if (totalCells <= 256) {
+                cellSize = baseCellSize * 0.9;
+                cellPadding = cellSize * 0.1;
+            } else {
+                cellSize = baseCellSize * 0.95;
+                cellPadding = cellSize * 0.05;
+            }
+            
+            const offsetX = (width - (maxX + 1) * (cellSize + cellPadding)) / 2;
+            const offsetY = (height - (maxY + 1) * (cellSize + cellPadding)) / 2;
+            
+            colorSchemes.thread.domain([0, threads.length - 1]);
+            
+            const threadgroups = d3.group(threads, d => `${d.threadgroupPos.x}-${d.threadgroupPos.y}`);
+           
+            const shouldDrawQuads = cellSize > 15 && totalCells <= 128;
+            const shouldDrawSimd = cellSize > 10;
+            const shouldDrawThreadgroups = threadgroups.size > 1 || totalCells <= 64;
+            
+            threadgroups.forEach((tgThreads) => {
+                if (!shouldDrawThreadgroups) return;
+                
+                const tgBounds = {
+                    minX: d3.min(tgThreads, d => d.globalPos.x),
+                    maxX: d3.max(tgThreads, d => d.globalPos.x),
+                    minY: d3.min(tgThreads, d => d.globalPos.y),
+                    maxY: d3.max(tgThreads, d => d.globalPos.y)
+                };
+                
+                const borderOffset = Math.max(3, cellSize * 0.15);
+                
+                g.append('rect')
+                    .attr('class', 'threadgroup-border')
+                    .attr('x', offsetX + tgBounds.minX * (cellSize + cellPadding) - borderOffset)
+                    .attr('y', offsetY + tgBounds.minY * (cellSize + cellPadding) - borderOffset)
+                    .attr('width', (tgBounds.maxX - tgBounds.minX + 1) * (cellSize + cellPadding) + 2 * borderOffset - cellPadding)
+                    .attr('height', (tgBounds.maxY - tgBounds.minY + 1) * (cellSize + cellPadding) + 2 * borderOffset - cellPadding);
+                
+                if (!shouldDrawSimd) return;
+                
+                const simdGroups = d3.group(tgThreads, d => d.simdGroup);
+                simdGroups.forEach((simdThreads, simdId) => {
+                    if (simdThreads.length === 0) return;
+                    
+                    const simdBounds = {
+                        minX: d3.min(simdThreads, d => d.globalPos.x),
+                        maxX: d3.max(simdThreads, d => d.globalPos.x),
+                        minY: d3.min(simdThreads, d => d.globalPos.y),
+                        maxY: d3.max(simdThreads, d => d.globalPos.y)
+                    };
+                    
+                    const simdOffset = Math.max(2, cellSize * 0.08);
+                    
+                    g.append('rect')
+                        .attr('class', 'simd-border')
+                        .attr('x', offsetX + simdBounds.minX * (cellSize + cellPadding) - simdOffset)
+                        .attr('y', offsetY + simdBounds.minY * (cellSize + cellPadding) - simdOffset)
+                        .attr('width', (simdBounds.maxX - simdBounds.minX + 1) * (cellSize + cellPadding) + 2 * simdOffset - cellPadding)
+                        .attr('height', (simdBounds.maxY - simdBounds.minY + 1) * (cellSize + cellPadding) + 2 * simdOffset - cellPadding);
+                });
+                
+                if (!shouldDrawQuads) return;
+                
+                const quadGroups = d3.group(tgThreads, d => d.quadGroup);
+                quadGroups.forEach((quadThreads) => {
+                    if (quadThreads.length === 0) return;
+                    
+                    const quadBounds = {
+                        minX: d3.min(quadThreads, d => d.globalPos.x),
+                        maxX: d3.max(quadThreads, d => d.globalPos.x),
+                        minY: d3.min(quadThreads, d => d.globalPos.y),
+                        maxY: d3.max(quadThreads, d => d.globalPos.y)
+                    };
+                    
+                    g.append('rect')
+                        .attr('class', 'quad-border')
+                        .attr('x', offsetX + quadBounds.minX * (cellSize + cellPadding) - 1)
+                        .attr('y', offsetY + quadBounds.minY * (cellSize + cellPadding) - 1)
+                        .attr('width', (quadBounds.maxX - quadBounds.minX + 1) * (cellSize + cellPadding) + 2 - cellPadding)
+                        .attr('height', (quadBounds.maxY - quadBounds.minY + 1) * (cellSize + cellPadding) + 2 - cellPadding);
+                });
+            });
+            
+            const threadRects = g.selectAll('.thread-rect')
+                .data(threads)
+                .enter()
+                .append('rect')
+                .attr('class', 'thread-rect')
+                .attr('x', d => offsetX + d.globalPos.x * (cellSize + cellPadding))
+                .attr('y', d => offsetY + d.globalPos.y * (cellSize + cellPadding))
+                .attr('width', cellSize)
+                .attr('height', cellSize)
+                .attr('fill', d => colorSchemes.thread(d.linearGlobal))
+                .on('click', showThreadDetails);
+            
+            g.selectAll('.thread-text')
+                .data(threads)
+                .enter()
+                .append('text')
+                .attr('class', 'thread-text')
+                .attr('x', d => offsetX + d.globalPos.x * (cellSize + cellPadding) + cellSize / 2)
+                .attr('y', d => offsetY + d.globalPos.y * (cellSize + cellPadding) + cellSize / 2)
+                .text(d => totalCells > 256 ? '' : d.linearGlobal)
+                .style('font-size', Math.max(8, Math.min(cellSize / 2.5, 14)) + 'px')
+                .style('opacity', totalCells > 256 ? 0 : 1);
+        }
+
+        function showThreadDetails(event, thread) {
+            const info = document.getElementById('threadInfo');
+            info.innerHTML = `
+                <div class="info-row">
+                    <span class="info-label">Thread ID (Global Linear):</span>
+                    <span class="info-value">${thread.linearGlobal}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Thread Position in Grid:</span>
+                    <span class="info-value">(${thread.globalPos.x}, ${thread.globalPos.y})</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Threadgroup Position:</span>
+                    <span class="info-value">(${thread.threadgroupPos.x}, ${thread.threadgroupPos.y})</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Thread in Threadgroup:</span>
+                    <span class="info-value">(${thread.localPos.x}, ${thread.localPos.y}) = ${thread.linearInTg}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">SIMD Group:</span>
+                    <span class="info-value">${thread.simdGroup}, Lane: ${thread.simdLane}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Quad Group:</span>
+                    <span class="info-value">${thread.quadGroup}, Lane: ${thread.quadLane}</span>
+                </div>
+            `;
+        }
+
+        function animateExecution() {
+            if (animationRunning) return;
+            animationRunning = true;
+            
+            const svg = d3.select('#gridViz');
+            const rects = svg.selectAll('.thread-rect');
+            
+            rects.interrupt().style('opacity', 0.2);
+            
+            let completedAnimations = 0;
+            currentData.forEach((thread, i) => {
+                setTimeout(() => {
+                    rects.filter(d => d.linearGlobal === thread.linearGlobal)
+                        .transition()
+                        .duration(120)
+                        .style('opacity', 1)
+                        .attr('stroke', '#fff')
+                        .attr('stroke-width', 3)
+                        .on('end', () => {
+                            completedAnimations++;
+                            if (completedAnimations === currentData.length) {
+                                setTimeout(() => {
+                                    animationRunning = false;
+                                }, 200);
+                            }
+                        });
+                }, i * 30);
+            });
+        }
+
+        function animateSimdGroups() {
+            if (animationRunning) return;
+            animationRunning = true;
+            
+            const svg = d3.select('#gridViz');
+            const rects = svg.selectAll('.thread-rect');
+            
+            rects.interrupt().style('opacity', 0.2).attr('stroke', '#444').attr('stroke-width', 1);
+            
+            const simdGroups = d3.group(currentData, d => `${d.threadgroupPos.x}-${d.threadgroupPos.y}-${d.simdGroup}`);
+            
+            let completedGroups = 0;
+            Array.from(simdGroups.values()).forEach((threads, groupIndex) => {
+                setTimeout(() => {
+                    threads.forEach(thread => {
+                        rects.filter(d => d.linearGlobal === thread.linearGlobal)
+                            .transition()
+                            .duration(300)
+                            .style('opacity', 1)
+                            .attr('stroke', '#00ffff')
+                            .attr('stroke-width', 4);
+                    });
+                    
+                    setTimeout(() => {
+                        threads.forEach(thread => {
+                            rects.filter(d => d.linearGlobal === thread.linearGlobal)
+                                .transition()
+                                .duration(200)
+                                .attr('stroke', '#444')
+                                .attr('stroke-width', 1);
+                        });
+                        
+                        completedGroups++;
+                        if (completedGroups === simdGroups.size) {
+                            setTimeout(() => {
+                                animationRunning = false;
+                            }, 300);
+                        }
+                    }, 400);
+                }, groupIndex * 700);
+            });
+        }
+
+        function animateThreadgroups() {
+            if (animationRunning) return;
+            animationRunning = true;
+            
+            const svg = d3.select('#gridViz');
+            const rects = svg.selectAll('.thread-rect');
+            
+            rects.interrupt().style('opacity', 0.2).attr('stroke', '#444').attr('stroke-width', 1);
+            
+            const threadgroups = d3.group(currentData, d => `${d.threadgroupPos.x}-${d.threadgroupPos.y}`);
+            
+            let completedGroups = 0;
+            Array.from(threadgroups.values()).forEach((threads, groupIndex) => {
+                setTimeout(() => {
+                    threads.forEach(thread => {
+                        rects.filter(d => d.linearGlobal === thread.linearGlobal)
+                            .transition()
+                            .duration(400)
+                            .style('opacity', 1)
+                            .attr('stroke', '#ff3838')
+                            .attr('stroke-width', 4);
+                    });
+                    
+                    setTimeout(() => {
+                        threads.forEach(thread => {
+                            rects.filter(d => d.linearGlobal === thread.linearGlobal)
+                                .transition()
+                                .duration(300)
+                                .attr('stroke', '#444')
+                                .attr('stroke-width', 1);
+                        });
+                        
+                        completedGroups++;
+                        if (completedGroups === threadgroups.size) {
+                            setTimeout(() => {
+                                animationRunning = false;
+                            }, 400);
+                        }
+                    }, 600);
+                }, groupIndex * 1000);
+            });
+        }
+
+        function resetAnimation() {
+            if (animationRunning) return;
+            
+            const svg = d3.select('#gridViz');
+            const rects = svg.selectAll('.thread-rect');
+            
+            rects.interrupt()
+                .style('opacity', 1)
+                .attr('stroke', '#444')
+                .attr('stroke-width', 1);
+        }
+
+        function updateControls() {
+            const dispatchMode = document.getElementById('dispatchMode').value;
+            const tgHeightControl = document.getElementById('threadgroupHeight').parentElement;
+            const gridHeightControl = document.getElementById('gridHeight').parentElement;
+            
+            if (dispatchMode === '1d') {
+                tgHeightControl.style.opacity = '0.3';
+                gridHeightControl.style.opacity = '0.3';
+                document.getElementById('threadgroupHeight').value = 1;
+                document.getElementById('gridHeight').value = 1;
+                document.getElementById('threadgroupHeightValue').textContent = '1';
+                document.getElementById('gridHeightValue').textContent = '1';
+            } else {
+                tgHeightControl.style.opacity = '1';
+                gridHeightControl.style.opacity = '1';
+            }
+        }
+
+        document.getElementById('dispatchMode').addEventListener('change', () => {
+            updateControls();
+            renderVisualization();
+        });
+
+        ['threadgroupWidth', 'threadgroupHeight', 'gridWidth', 'gridHeight'].forEach(id => {
+            const input = document.getElementById(id);
+            const valueSpan = document.getElementById(id + 'Value');
+            
+            input.addEventListener('input', () => {
+                valueSpan.textContent = input.value;
+                renderVisualization();
+            });
+        });
+
+        document.getElementById('simdSize').addEventListener('change', renderVisualization);
+
+        updateControls();
+        renderVisualization();
+    </script>
+</body>
+</html>
