@@ -16,6 +16,8 @@ Happy to receive feedback on where my understanding is off or what can be invest
 There is ample amount of content to deep-dive into the Pytorch codebase. We will not assume
 proficiency but overall familiarity with Pytorch and compilation here.
 
+Big thank you to Tal Ben-Nun for mentoring and guidance for this project.
+
 #### Introduction
 I've recently opened a [PR](https://github.com/pytorch/pytorch/pull/161213)
 to allow for Pytorch's compilation pipeline to understand pointwise communications.
