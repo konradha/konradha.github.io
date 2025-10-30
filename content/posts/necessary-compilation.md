@@ -1,7 +1,7 @@
 ---
 title: "On the necessity of removing the 𝚏𝚞𝚗𝚌𝚝𝚒𝚘𝚗𝚊𝚕 requirement in traceable functional collectives"
 date: 2025-10-26T19:45:36+01:00
-draft: False
+draft: True
 ---
 
 Recent Pytorch-related [releases](https://pytorch.org/blog/torchcomms/)
@@ -198,3 +198,6 @@ Or: Would making TFC allow for side effects be a smart choice to allow for Induc
 
 We would get zero-copy `all_reduce` and my newly-introduced pointwise
 comms would compile much more easily.
+
+All this to say: My current additions need some work. Dependency management
+is broken and to allow for actual pipelining I need to fix this.
