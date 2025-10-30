@@ -38,8 +38,7 @@ One could argue that using NCCL's [SymmetricMemory](https://dev-discuss.pytorch.
 feature might be sufficient
 We want to squeeze any and all overhead and want to enable
 optimizations allowing for the scheduler infrastructure and [cudagraphs](https://dev-discuss.pytorch.org/t/understanding-cudagraph-trees/1967/2)
-to capture all paths that lead to lower walltime. Exploiting Pytorch's compilation
-pipeline fully is for me then the proper channel to do that.
+to capture all paths that lead to lower walltime. I really want to exploit the entire Pytorch compilation pipeline to this end.
 
 There's been a considerable push for functionalization in Pytorch's infrastructure to reduce
 complexity when reasoning about the different compilation stages, e.g. [here](https://github.com/vllm-project/vllm/issues/14703) or [here](https://dev-discuss.pytorch.org/t/functionalization-in-pytorch-everything-you-wanted-to-know/965). To that end, the collectives have been designed
@@ -124,7 +123,7 @@ relax the `functional` requirement in the traceable functional collectives infra
 
 #### Changes inducing bugs
 
-So far it's great, we can use this async comms feature now to do distributed convolutions
+So far it's great, we can use this async comms feature to do distributed convolutions
 and whatever involves _blocking_ halo exchanges. What if we want to interleave
 communication and computation?
 
