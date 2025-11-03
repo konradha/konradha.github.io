@@ -1,414 +1,110 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Flashcard Drills</title>
+<title>Lernkarten-Quiz</title>
 <style>
-  :root{
-    --bg: #0b0e13;
-    --panel: #121826;
-    --muted: #8ea0b6;
-    --text: #e7eefb;
-    --accent: #7c9cff;
-    --accent-2:#4fe3c1;
-    --danger:#ff6b7a;
-    --ok:#6de07c;
-    --border:#1e2636;
-    --shadow: 0 10px 30px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
-    --radius: 18px;
-  }
+  :root{--bg:#0b0e13;--panel:#121826;--muted:#8ea0b6;--text:#e7eefb;--accent:#7c9cff;--accent-2:#4fe3c1;--danger:#ff6b7a;--ok:#6de07c;--border:#1e2636;--shadow:0 10px 30px rgba(0,0,0,.35),0 2px 10px rgba(0,0,0,.25);--radius:18px}
   html,body{height:100%}
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-    background: radial-gradient(1000px 600px at 10% -10%, rgba(124,156,255,.25), transparent 40%),
-                radial-gradient(800px 500px at 110% 10%, rgba(79,227,193,.18), transparent 40%),
-                var(--bg);
-    color:var(--text);
-    display:flex; align-items:center; justify-content:center;
-    padding:24px;
-  }
-  .app{
-    width:min(1000px, 100%); max-width:1000px;
-  }
-  .shell{
-    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-    border:1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow:hidden;
-  }
-  header{
-    padding:20px 22px;
-    display:flex; align-items:center; gap:14px; justify-content:space-between;
-    border-bottom:1px solid var(--border);
-    background: linear-gradient(180deg, rgba(124,156,255,.08), rgba(124,156,255,0));
-  }
-  .brand{
-    display:flex; align-items:center; gap:12px;
-    letter-spacing:.4px; font-weight:700;
-  }
-  .brand .dot{width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 0 12px rgba(124,156,255,.7)}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;background:radial-gradient(1000px 600px at 10% -10%,rgba(124,156,255,.25),transparent 40%),radial-gradient(800px 500px at 110% 10%,rgba(79,227,193,.18),transparent 40%),var(--bg);color:var(--text);display:flex;align-items:center;justify-content:center;padding:24px}
+  .app{width:min(1000px,100%);max-width:1000px}
+  .shell{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  header{padding:16px 18px;display:flex;align-items:center;gap:12px;justify-content:space-between;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(124,156,255,.08),rgba(124,156,255,0))}
+  .brand{display:flex;align-items:center;gap:10px;letter-spacing:.4px;font-weight:700}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 12px rgba(124,156,255,.7)}
   .muted{color:var(--muted)}
-  .controls{display:flex; gap:10px; flex-wrap:wrap}
-  button, .btn{
-    appearance:none; border:none; cursor:pointer;
-    padding:12px 16px; border-radius:14px;
-    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-    color:var(--text); font-weight:600; letter-spacing:.2px;
-    border:1px solid var(--border);
-    transition: transform .05s ease, box-shadow .15s ease, border-color .2s ease, background .2s ease;
-  }
-  button:hover{ transform: translateY(-1px); box-shadow:0 10px 18px rgba(0,0,0,.18)}
-  button.primary{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0b1020; border-color:transparent}
-  button.ghost{ background: transparent}
-  button:disabled{ opacity:.5; cursor:not-allowed; transform:none}
-  main{ padding:22px; display:grid; gap:18px}
-  .status{
-    display:grid; grid-template-columns: 1fr auto; align-items:center; gap:14px;
-  }
-  .progress{
-    height:10px; background:#0b1120; border-radius:999px; border:1px solid var(--border); overflow:hidden;
-  }
-  .bar{height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent-2)); transition:width .35s ease}
-  .counter{font-weight:700; letter-spacing:.3px}
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-    border:1px solid var(--border);
-    border-radius: 16px; padding:20px; box-shadow: var(--shadow);
-    display:grid; gap:16px;
-  }
-  .q{
-    font-size: clamp(18px, 2.4vw, 24px);
-    line-height:1.35; font-weight:700;
-  }
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  button,.btn{appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));color:var(--text);font-weight:600;letter-spacing:.2px;border:1px solid var(--border);transition:transform .05s ease,box-shadow .15s ease,border-color .2s ease,background .2s ease}
+  button:hover{transform:translateY(-1px);box-shadow:0 10px 18px rgba(0,0,0,.18)}
+  button.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#0b1020;border-color:transparent}
+  button.ghost{background:transparent}
+  button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  main{padding:18px;display:grid;gap:16px}
+  .status{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px}
+  .progress{height:10px;background:#0b1120;border-radius:999px;border:1px solid var(--border);overflow:hidden}
+  .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .35s ease}
+  .counter{font-weight:700;letter-spacing:.3px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);display:grid;gap:14px}
+  .q{font-size:clamp(18px,2.4vw,24px);line-height:1.35;font-weight:700}
   .source{font-size:12px}
-  .answer-wrap{ display:grid; gap:10px}
-  .options{ display:grid; gap:10px}
-  .opt{
-    padding:12px 14px; border-radius:12px; border:1px solid var(--border);
-    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    display:flex; gap:10px; align-items:center;
-    cursor:pointer; transition: background .15s ease, transform .03s ease;
+  .answer-wrap{display:grid;gap:10px}
+  .options{display:grid;gap:10px}
+  .opt{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));display:flex;gap:10px;align-items:center;cursor:pointer;transition:background .15s ease,transform .03s ease}
+  .opt input{accent-color:var(--accent)}
+  .opt:hover{background:rgba(124,156,255,.08)}
+  .answer-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .result{padding:14px;border-radius:12px;border:1px dashed var(--border);background:#0d1424;display:none}
+  .result.show{display:block}
+  .result.good{border-color:rgba(109,224,124,.5)}
+  .result.bad{border-color:rgba(255,107,122,.5)}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#0b1120;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .pill.good{color:var(--ok)}
+  .pill.bad{color:var(--danger)}
+  .flex{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  footer{padding:16px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;background:#0b1120;border:1px solid var(--border);padding:2px 6px;border-radius:6px;font-size:12px}
+  .hidden{display:none!important}
+  .center{text-align:center;padding:28px 16px}
+  @media (max-width:640px){
+    body{padding:12px}
+    header{flex-direction:column;align-items:stretch;gap:10px}
+    .controls{width:100%}
+    .controls button{flex:1}
+    .status{grid-template-columns:1fr}
+    .card{padding:14px}
   }
-  .opt input{ accent-color: var(--accent)}
-  .opt:hover{ background: rgba(124,156,255,.08)}
-  input[type="text"]{
-    width:100%; padding:12px 14px; border-radius:12px; outline:none;
-    background:#0b1120; color:var(--text); border:1px solid var(--border); font-size:16px;
-  }
-  .answer-actions{ display:flex; gap:10px; flex-wrap:wrap}
-  .result{
-    padding:14px; border-radius:12px; border:1px dashed var(--border);
-    background: #0d1424; display:none;
-  }
-  .result.show{ display:block}
-  .result.good{ border-color: rgba(109,224,124,.5)}
-  .result.bad{ border-color: rgba(255,107,122,.5)}
-  .pill{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:6px 10px; border-radius:999px; border:1px solid var(--border);
-    background:#0b1120; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
-  }
-  .pill.good{ color:var(--ok) }
-  .pill.bad{ color:var(--danger) }
-  .flex{ display:flex; align-items:center; gap:8px; flex-wrap:wrap}
-  footer{
-    padding:20px 22px; border-top:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-  }
-  .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background:#0b1120; border:1px solid var(--border); padding:2px 6px; border-radius:6px; font-size:12px}
-  .hidden{ display:none !important}
-  .center{ text-align:center; padding:40px 20px}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="shell">
     <header>
-      <div class="brand"><span class="dot"></span> Flashcard Drills <span class="muted">• single session</span></div>
+      <div class="brand"><span class="dot"></span> Lernkarten-Quiz <span class="muted">• Einzelsitzung</span></div>
       <div class="controls">
-        <button id="startBtn" class="primary">Start 15-Card Session</button>
-        <button id="toggleModeBtn" class="ghost" title="Force question type">Mode: Mix</button>
+        <button id="startBtn" class="primary">15 Fragen starten</button>
+        <button id="modeBtn" class="ghost" disabled>Fragetyp: Multiple Choice</button>
       </div>
     </header>
-
     <main>
       <div class="status">
-        <div class="progress" aria-label="progress"><div class="bar" id="bar"></div></div>
+        <div class="progress" aria-label="Fortschritt"><div class="bar" id="bar"></div></div>
         <div class="counter" id="counter">0 / 15</div>
       </div>
-
       <section id="stage" class="card center">
-        <div>Load your <strong>data.csv</strong> in the same folder as this file, then click <em>Start 15-Card Session</em>.</div>
-        <div class="muted" style="margin-top:6px;">CSV must have headers: <code class="kbd">Front</code>, <code class="kbd">Back</code> (optional <code class="kbd">Source</code>).</div>
+        <div>Lege <strong>data.csv</strong> in denselben Ordner wie diese Datei und klicke <em>15 Fragen starten</em>.</div>
+        <div class="muted" style="margin-top:6px;">CSV-Header: <span class="kbd">Front</span>, <span class="kbd">Back</span> (optional <span class="kbd">Source</span>).</div>
       </section>
-
       <section id="result" class="result"></section>
     </main>
-
     <footer>
-      <div class="muted">Tip: Press <span class="kbd">Enter</span> to check, <span class="kbd">N</span> for next.</div>
+      <div class="muted">Tipp: <span class="kbd">Enter</span> prüfen, <span class="kbd">N</span> nächste.</div>
       <div class="flex">
-        <span class="pill" id="scorePill">Score: 0</span>
-        <span class="pill" id="modePill">Mixed</span>
+        <span class="pill" id="scorePill">Punkte: 0</span>
+        <span class="pill" id="modePill">Multiple Choice</span>
       </div>
     </footer>
   </div>
 </div>
 
 <script>
-/* ========== Utilities ========== */
-const randInt = (n) => Math.floor(Math.random() * n);
-const shuffle = (arr) => {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = randInt(i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
-const sample = (arr, n) => shuffle([...arr]).slice(0, n);
-
-/* CSV parser that supports quoted fields, commas, and newlines inside quotes */
-function parseCSV(text){
-  const rows = [];
-  let cur = '', row = [], inQuotes = false;
-  for (let i = 0; i < text.length; i++){
-    const c = text[i], next = text[i+1];
-    if (c === '"' ){
-      if (inQuotes && next === '"'){ cur += '"'; i++; }
-      else { inQuotes = !inQuotes; }
-    } else if (c === ',' && !inQuotes){
-      row.push(cur); cur = '';
-    } else if ((c === '\n' || c === '\r') && !inQuotes){
-      if (cur.length || row.length){ row.push(cur); rows.push(row); row = []; cur = ''; }
-      // handle \r\n
-      if (c === '\r' && next === '\n') i++;
-    } else { cur += c; }
-  }
-  if (cur.length || row.length){ row.push(cur); rows.push(row); }
-  // to objects by header
-  const [header, ...data] = rows;
-  const keys = header.map(h => h.trim());
-  return data.map(cols => {
-    const obj = {};
-    keys.forEach((k, idx) => obj[k] = (cols[idx] ?? '').trim());
-    return obj;
-  });
-}
-
-/* Fuzzy compare: checks if user text contains key parts of the correct answer */
-function isCorrectFreeText(user, correct){
-  const norm = s => s.toLowerCase().normalize('NFKD').replace(/[^\p{Letter}\p{Number}\s]/gu,' ').replace(/\s+/g,' ').trim();
-  const u = norm(user), c = norm(correct);
-  if (!u) return false;
-  // exact or substring wins
-  if (u === c || c.includes(u)) return true;
-  // token overlap heuristic
-  const utoks = new Set(u.split(' '));
-  const ctoks = c.split(' ').filter(Boolean);
-  const hits = ctoks.filter(t => utoks.has(t)).length;
-  return hits >= Math.min(3, Math.ceil(ctoks.length * 0.6));
-}
-
-/* ========== App State ========== */
-const App = {
-  allCards: [],
-  session: [],
-  idx: 0,
-  score: 0,
-  forcedMode: 'mix', // 'mix' | 'open' | 'mc'
-};
-
-/* Load CSV and start */
-async function startSession(){
-  try{
-    const res = await fetch('data.csv', {cache:'no-store'});
-    if (!res.ok) throw new Error('CSV not found. Place data.csv next to this file.');
-    const txt = await res.text();
-    const rows = parseCSV(txt).filter(r => r.Front && r.Back);
-    if (rows.length === 0) throw new Error('No valid rows with Front/Back found in CSV.');
-    App.allCards = rows;
-    App.session = sample(rows, Math.min(15, rows.length));
-    App.idx = 0; App.score = 0;
-    renderCard();
-    updateStatus();
-    showResult('', null);
-  }catch(e){
-    renderError(e.message);
-  }
-}
-
-/* Decide question type */
-function pickMode(){
-  if (App.forcedMode !== 'mix') return App.forcedMode;
-  return Math.random() < 0.5 ? 'open' : 'mc';
-}
-
-/* Build MC options (1 correct + 3 distractors) */
-function buildMCOptions(correctBack){
-  const pool = App.allCards.map(c => c.Back).filter(b => b && b !== correctBack);
-  const distractors = sample(pool, Math.min(3, pool.length));
-  return shuffle([correctBack, ...distractors]).map((text, i) => ({
-    id: 'opt' + i + '-' + App.idx,
-    text, correct: text === correctBack
-  }));
-}
-
-/* Render */
-function updateStatus(){
-  const count = App.session.length || 15;
-  const done = Math.min(App.idx, count);
-  document.getElementById('counter').textContent = `${done} / ${count}`;
-  const pct = count ? (done / count) * 100 : 0;
-  document.getElementById('bar').style.width = pct + '%';
-  document.getElementById('scorePill').textContent = `Score: ${App.score}`;
-  document.getElementById('modePill').textContent =
-    App.forcedMode === 'mix' ? 'Mixed' : (App.forcedMode === 'open' ? 'Open-ended' : 'Multiple-choice');
-}
-
-function renderError(msg){
-  const stage = document.getElementById('stage');
-  stage.classList.remove('center');
-  stage.innerHTML = `
-    <div class="q">⚠️ Couldn’t start the session</div>
-    <div class="muted">${msg}</div>
-  `;
-}
-
-function renderCard(){
-  const stage = document.getElementById('stage');
-  const total = App.session.length;
-  if (App.idx >= total){
-    stage.innerHTML = `
-      <div class="q">Session complete 🎉</div>
-      <div class="muted">You scored <strong>${App.score}</strong> / <strong>${total}</strong>.</div>
-      <div class="answer-actions" style="margin-top:10px;">
-        <button class="primary" onclick="startSession()">Restart with new random 15</button>
-      </div>
-    `;
-    updateStatus();
-    return;
-  }
-  const card = App.session[App.idx];
-  const mode = pickMode();
-
-  let body = `
-    <div class="pill">Question ${App.idx + 1} of ${total}</div>
-    <div class="q">${escapeHTML(card.Front)}</div>
-    ${card.Source ? `<div class="source muted">Source: ${escapeHTML(card.Source)}</div>` : ``}
-    <div class="answer-wrap" id="answerWrap">
-  `;
-
-  if (mode === 'open'){
-    body += `
-      <input id="freeInput" type="text" placeholder="Type your answer…" autocomplete="off" />
-      <div class="answer-actions">
-        <button class="primary" id="checkBtn">Check</button>
-        <button class="ghost" id="revealBtn">Reveal</button>
-      </div>
-    `;
-  } else {
-    const opts = buildMCOptions(card.Back);
-    body += `<div class="options">` + opts.map(o => `
-      <label class="opt" for="${o.id}">
-        <input type="radio" name="opt" id="${o.id}" value="${escapeAttr(o.text)}" />
-        <span>${escapeHTML(o.text)}</span>
-      </label>
-    `).join('') + `</div>
-    <div class="answer-actions">
-      <button class="primary" id="checkBtn">Check</button>
-      <button class="ghost" id="revealBtn">Reveal</button>
-    </div>`;
-  }
-  body += `</div>`;
-  stage.classList.remove('center');
-  stage.innerHTML = body;
-
-  // wire events
-  const checkBtn = document.getElementById('checkBtn');
-  const revealBtn = document.getElementById('revealBtn');
-  checkBtn.addEventListener('click', () => checkAnswer(mode, card));
-  revealBtn.addEventListener('click', () => reveal(card));
-
-  // keyboard: Enter = check, N = next
-  window.onkeydown = (e) => {
-    if (e.key === 'Enter') checkBtn.click();
-    if (e.key.toLowerCase() === 'n') next();
-  };
-
-  // focus input if open-ended
-  const input = document.getElementById('freeInput');
-  if (input) input.focus();
-
-  updateStatus();
-  showResult('', null);
-}
-
-function showResult(text, good){
-  const el = document.getElementById('result');
-  if (!text){
-    el.className = 'result';
-    el.innerHTML = '';
-    return;
-  }
-  el.className = 'result show ' + (good === true ? 'good' : good === false ? 'bad' : '');
-  const pill = good === true ? `<span class="pill good">Correct</span>` :
-               good === false ? `<span class="pill bad">Incorrect</span>` : '';
-  el.innerHTML = `${pill} <div style="margin-top:8px">${text}</div>
-  <div class="answer-actions" style="margin-top:10px">
-    <button onclick="next()">Next</button>
-  </div>`;
-}
-
-function checkAnswer(mode, card){
-  if (mode === 'open'){
-    const val = (document.getElementById('freeInput')?.value || '').trim();
-    const ok = isCorrectFreeText(val, card.Back);
-    if (ok){ App.score++; }
-    showResult(`
-      <div><strong>Your answer:</strong> ${val ? escapeHTML(val) : '<em>(empty)</em>'}</div>
-      <div style="margin-top:6px"><strong>Expected:</strong> ${escapeHTML(card.Back)}</div>
-    `, ok);
-  } else {
-    const checked = [...document.querySelectorAll('input[name="opt"]')].find(i => i.checked);
-    const chosen = checked ? checked.value : '';
-    const ok = isCorrectFreeText(chosen, card.Back);
-    if (ok){ App.score++; }
-    showResult(`
-      <div><strong>Your choice:</strong> ${chosen ? escapeHTML(chosen) : '<em>(none)</em>'}</div>
-      <div style="margin-top:6px"><strong>Correct:</strong> ${escapeHTML(card.Back)}</div>
-    `, ok);
-  }
-  updateStatus();
-}
-
-function reveal(card){
-  showResult(`<div><strong>Answer:</strong> ${escapeHTML(card.Back)}</div>`, null);
-}
-
-function next(){
-  App.idx++;
-  renderCard();
-}
-
-/* Mode toggle */
-document.getElementById('toggleModeBtn').addEventListener('click', () => {
-  App.forcedMode = App.forcedMode === 'mix' ? 'open' :
-                   App.forcedMode === 'open' ? 'mc' : 'mix';
-  document.getElementById('modePill').textContent =
-    App.forcedMode === 'mix' ? 'Mixed' : (App.forcedMode === 'open' ? 'Open-ended' : 'Multiple-choice');
-  document.getElementById('toggleModeBtn').textContent =
-    'Mode: ' + (App.forcedMode === 'mix' ? 'Mix' : App.forcedMode === 'open' ? 'Open-ended' : 'Multiple choice');
-});
-
-/* Start */
-document.getElementById('startBtn').addEventListener('click', startSession);
-
-/* Helpers */
-function escapeHTML(s){ return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function escapeAttr(s){ return s.replace(/"/g,'&quot;'); }
+const randInt=n=>Math.floor(Math.random()*n);
+const shuffle=arr=>{for(let i=arr.length-1;i>0;i--){const j=randInt(i+1);[arr[i],arr[j]]=[arr[j],arr[i]]}return arr};
+const sample=(arr,n)=>shuffle([...arr]).slice(0,n);
+function parseCSV(text){const rows=[];let cur='',row=[],inQuotes=false;for(let i=0;i<text.length;i++){const c=text[i],next=text[i+1];if(c==='"'){if(inQuotes&&next==='"'){cur+='"';i++}else{inQuotes=!inQuotes}}else if(c===','&&!inQuotes){row.push(cur);cur=''}else if((c==='\n'||c==='\r')&&!inQuotes){if(cur.length||row.length){row.push(cur);rows.push(row);row=[];cur=''}if(c==='\r'&&next==='\n')i++}else{cur+=c}}if(cur.length||row.length){row.push(cur);rows.push(row)}const[header,...data]=rows;const keys=header.map(h=>h.trim());return data.map(cols=>{const obj={};keys.forEach((k,idx)=>obj[k]=(cols[idx]??'').trim());return obj})}
+const App={allCards:[],session:[],idx:0,score:0};
+async function startSession(){try{const res=await fetch('data.csv',{cache:'no-store'});if(!res.ok)throw new Error('CSV nicht gefunden. Lege data.csv neben diese Datei.');const txt=await res.text();const rows=parseCSV(txt).filter(r=>r.Front&&r.Back);if(rows.length===0)throw new Error('Keine gültigen Zeilen mit Front/Back gefunden.');App.allCards=rows;App.session=sample(rows,Math.min(15,rows.length));App.idx=0;App.score=0;renderCard();updateStatus();showResult('',null)}catch(e){renderError(e.message)}}
+function buildMCOptions(correctBack){const pool=App.allCards.map(c=>c.Back).filter(b=>b&&b!==correctBack);const distractors=sample(pool,Math.min(3,pool.length));return shuffle([correctBack,...distractors]).map((text,i)=>({id:'opt'+i+'-'+App.idx,text,correct:text===correctBack}))}
+function updateStatus(){const count=App.session.length||15;const done=Math.min(App.idx,count);document.getElementById('counter').textContent=`${done} / ${count}`;const pct=count?(done/count)*100:0;document.getElementById('bar').style.width=pct+'%';document.getElementById('scorePill').textContent=`Punkte: ${App.score}`;document.getElementById('modePill').textContent='Multiple Choice'}
+function renderError(msg){const stage=document.getElementById('stage');stage.classList.remove('center');stage.innerHTML=`<div class="q">⚠️ Sitzung konnte nicht gestartet werden</div><div class="muted">${escapeHTML(msg)}</div>`}
+function renderCard(){const stage=document.getElementById('stage');const total=App.session.length;if(App.idx>=total){stage.innerHTML=`<div class="q">Fertig 🎉</div><div class="muted">Dein Ergebnis: <strong>${App.score}</strong> von <strong>${total}</strong>.</div><div class="answer-actions" style="margin-top:10px;"><button class="primary" onclick="startSession()">Neue 15 starten</button></div>`;updateStatus();return}const card=App.session[App.idx];const opts=buildMCOptions(card.Back);let body=`<div class="pill">Frage ${App.idx+1} von ${total}</div><div class="q">${escapeHTML(card.Front)}</div>${card.Source?`<div class="source muted">Quelle: ${escapeHTML(card.Source)}</div>`:''}<div class="answer-wrap" id="answerWrap"><div class="options">`+opts.map(o=>`<label class="opt" for="${o.id}"><input type="radio" name="opt" id="${o.id}" value="${escapeAttr(o.text)}" /><span>${escapeHTML(o.text)}</span></label>`).join('')+`</div><div class="answer-actions"><button class="primary" id="checkBtn">Prüfen</button><button class="ghost" id="revealBtn">Lösung zeigen</button></div></div>`;stage.classList.remove('center');stage.innerHTML=body;const checkBtn=document.getElementById('checkBtn');const revealBtn=document.getElementById('revealBtn');checkBtn.addEventListener('click',()=>checkAnswer(card));revealBtn.addEventListener('click',()=>reveal(card));window.onkeydown=e=>{if(e.key==='Enter')checkBtn.click();if(e.key.toLowerCase()==='n')next()};updateStatus();showResult('',null)}
+function showResult(text,good){const el=document.getElementById('result');if(!text){el.className='result';el.innerHTML='';return}el.className='result show '+(good===true?'good':good===false?'bad':'');const pill=good===true?`<span class="pill good">Richtig</span>`:good===false?`<span class="pill bad">Falsch</span>`:'';el.innerHTML=`${pill}<div style="margin-top:8px">${text}</div><div class="answer-actions" style="margin-top:10px"><button onclick="next()">Weiter</button></div>`}
+function checkAnswer(card){const checked=[...document.querySelectorAll('input[name="opt"]')].find(i=>i.checked);const chosen=checked?checked.value:'';const ok=chosen===card.Back;if(ok)App.score++;showResult(`<div><strong>Deine Auswahl:</strong> ${chosen?escapeHTML(chosen):'<em>(keine)</em>'}</div><div style="margin-top:6px"><strong>Korrekt:</strong> ${escapeHTML(card.Back)}</div>`,ok);updateStatus()}
+function reveal(card){showResult(`<div><strong>Lösung:</strong> ${escapeHTML(card.Back)}</div>`,null)}
+function next(){App.idx++;renderCard()}
+document.getElementById('startBtn').addEventListener('click',startSession);
+function escapeHTML(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function escapeAttr(s){return s.replace(/"/g,'&quot;')}
 </script>
 </body>
 </html>
