@@ -1,7 +1,7 @@
 ---
 title: "On the necessity of removing the 𝚏𝚞𝚗𝚌𝚝𝚒𝚘𝚗𝚊𝚕 requirement in traceable functional collectives"
 date: 2025-10-26T19:45:36+01:00
-draft: True
+draft: False
 ---
 
 Recent Pytorch-related [releases](https://pytorch.org/blog/torchcomms/)
