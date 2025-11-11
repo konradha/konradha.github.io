@@ -1,5 +1,5 @@
 ---
-title: "On the necessity of removing the 𝚏𝚞𝚗𝚌𝚝𝚒𝚘𝚗𝚊𝚕 requirement in traceable functional collectives"
+title: "Adding p2p comms to torch.compile"
 date: 2025-10-26T19:45:36+01:00
 draft: False
 ---

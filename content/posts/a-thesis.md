@@ -1,7 +1,7 @@
 ---
 title: "A thesis"
 date: 2025-11-07T15:06:05+01:00
-draft: false
+draft: true
 ---
 <!---
 - what's a PDE
