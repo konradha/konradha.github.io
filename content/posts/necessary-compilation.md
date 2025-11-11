@@ -35,8 +35,8 @@ come to mind. I will offer two applications that are often used in HPC and ML.
 
 #### Current state
 One could argue that using NCCL's [SymmetricMemory](https://dev-discuss.pytorch.org/t/pytorch-symmetricmemory-harnessing-nvlink-programmability-with-ease/2798)
-feature might be sufficient
-We want to squeeze any and all overhead and want to enable
+feature might be sufficient.
+We want to enable
 optimizations allowing for the scheduler infrastructure and [cudagraphs](https://dev-discuss.pytorch.org/t/understanding-cudagraph-trees/1967/2)
 to capture all paths that lead to lower walltime. I really want to exploit the entire Pytorch compilation pipeline to this end.
 
@@ -69,7 +69,7 @@ suggesting otherwise.
 #### My changes
 In my [PR](https://github.com/pytorch/pytorch/pull/161213), I've sort of abused the 
 existing infrastructure for collectives to allow for pointwise communications to be
-traced using Dynamo. Notably, we construct temporary nodes in the graph for `P2POps`
+traced using Dynamo. We construct temporary nodes in the graph for `P2POps`
 which are often used together with `batch_isend_irecv` to issue coalesced pointwise
 comms. The entire idea of this batching is to allow reducing overhead when creating new 
 communicators (highly recommend looking inside `torch/csrc/distributed/c10d` and 
