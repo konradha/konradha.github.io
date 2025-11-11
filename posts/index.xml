@@ -1,36 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on א</title><link>https://konradha.com/posts/</link><description>Recent content in Posts on א</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 07 Nov 2025 15:06:05 +0100</lastBuildDate><atom:link href="https://konradha.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>A thesis</title><link>https://konradha.com/posts/a-thesis/</link><pubDate>Fri, 07 Nov 2025 15:06:05 +0100</pubDate><guid>https://konradha.com/posts/a-thesis/</guid><description>&lt;!---
-- what's a PDE
-- what is simulation used for
-- what's a model weight
-- simulation is expensive and hard to understand, limited
-- RL simulation is imperfect, not physical
-- UQ is really fucking expensive
-- no simulation and experiment-heavy industry wants to share their IP
-- PDE FMs are good: not too difficult-to-train, well-explored architectures (at scale!),
- VERY good generalizability
-- data is hard to come by
-- with smart data exploration, close to industry (VPC / on-prem WITH customers):
-- unlocking: interpretable data sources and diversity of problems and deisgn choices
-- unlocking: smart, quick exploration of the design space for actual engineering problems
- -&gt; electrodynamics, automotive, robotics and everything we can do in the continuum 
-- unlocking: UQ at scale for a wide variety of problems
-- unlocking: distilling complex multi-scale multi-physics problems into a few activations
-- unlocking: (far ahead) RL enhanced with actual physics, downscaled from proprietary models
-- looking to build this step-by-step:
-
-1. data handling (and understanding with models)
-2. design space utilities
-3. UQ at scale
-4. distilling models for quicker runs
-5. serving large design decisions and expanding scale of problems (micro &lt;-&gt; macro?)
-6. understand models sufficiently to distill them into so quick predictions we can feed them into RL
-7. replace (too expensive, not all!) simulation in industry by learned surrogates and only enhance, bit-by-bit, the model
- once inference is deemed too brittle
-
----&gt;
-&lt;p&gt;Engineers do not need chatbots. The need cheap, nearly-instant evaluation of design, ideas and constantly
-refined physics.
-Reducing the overhead in feedback loops is the game.&lt;/p&gt;</description></item><item><title>On the necessity of removing the 𝚏𝚞𝚗𝚌𝚝𝚒𝚘𝚗𝚊𝚕 requirement in traceable functional collectives</title><link>https://konradha.com/posts/necessary-compilation/</link><pubDate>Sun, 26 Oct 2025 19:45:36 +0100</pubDate><guid>https://konradha.com/posts/necessary-compilation/</guid><description>&lt;p&gt;Recent Pytorch-related &lt;a href="https://pytorch.org/blog/torchcomms/"&gt;releases&lt;/a&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on א</title><link>https://konradha.com/posts/</link><description>Recent content in Posts on א</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Oct 2025 19:45:36 +0100</lastBuildDate><atom:link href="https://konradha.com/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Adding p2p comms to torch.compile</title><link>https://konradha.com/posts/necessary-compilation/</link><pubDate>Sun, 26 Oct 2025 19:45:36 +0100</pubDate><guid>https://konradha.com/posts/necessary-compilation/</guid><description>&lt;p&gt;Recent Pytorch-related &lt;a href="https://pytorch.org/blog/torchcomms/"&gt;releases&lt;/a&gt;
 might make some of the discussion here
 irrelevant. I do think that people &amp;ndash; as long as the experimental features recently
 published aren&amp;rsquo;t in Pytorch main &amp;ndash; will keep relying on Pytorch&amp;rsquo;s compilation
