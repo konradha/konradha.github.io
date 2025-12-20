@@ -478,7 +478,7 @@ def _write_leaves_kernel(
 </code></pre>
 </details>
 
-The output is a flat array in heap layout: leaf i occupies slots 2i and 2i+1. The
+The output is a flat array in heap layout: leaf $i$ occupies slots $2i$ and $2i+1$. The
 `out_mask` distinguishes real points from padding.
 When a segment has a single point, we duplicate it to maintain the pair structure but mark the duplicate as invalid.
 
@@ -507,7 +507,8 @@ Let us run this finally. This has thankfully been possible due to $company's hel
 RTX 6000 Pro Blackwell Server cards which give us considerable access to compute.
 
 ```bash
-# status is a correctness check comparing the distance and node existence of both created trees
+# status is a correctness check comparing the distance
+# and node existence of both created trees
 ===========================================================
 batch benchmark (n=16384, dim=3)
 ===========================================================
@@ -548,11 +549,11 @@ At level $l$, we have $2^l$ segments, each containing $n / 2^l$ points.
 Each segment gets one thread block (256 threads). The utilization at level $l$ is:
 
 $$
-\text{utilization}(l) = \min\left(1, \frac{n / 2^l}{256}\right)
+\text{utilization}(l) = \frac{n / 2^l}{256}
 $$
 
 At the root (level 0): One segment with all $n$ points.
-For $n \geq 256$, we're at 100% utilization — though we're underusing parallelism since only one block is active.
+For $n \geq 256$, we're at 100% utilization - though we're underusing parallelism since only one block is active.
 
 At the leaves (level $L-1$ where $L = \lceil \log_2 n \rceil$): We have $2^{L-1}$
 segments with ~2 points each. We launch $2^{L-1} \times 256$ threads to process $n$ points:
@@ -561,7 +562,7 @@ $$
 \text{utilization}(L-1) = \frac{n}{2^{L-1} \times 256} = \frac{2}{256} \approx 0.78\%
 $$
 
-The _crossover point_ — where utilization drops below 50% — occurs when $n / 2^l < 128$:
+The _crossover point_ occurs when $n / 2^l < 128$:
 
 $$
 l_{\text{crossover}} = \log_2 n - 7
@@ -574,7 +575,7 @@ $$
 | 65,536 | 16 | 9 |
 | 1,048,576 | 20 | 13 |
 
-The last 7 levels are *always* below 50% utilization regardless of $n$. This is intrinsic to the recursive halving — late levels have many small segments, each paying the full overhead of a thread block.
+The last 7 levels are *always* below 50% utilization regardless of $n$. This is intrinsic to the recursive halving - late levels have many small segments, each paying the full overhead of a thread block.
 
 This is why the host-only implementation remains competitive for small $n$: the recursive structure maps naturally to
 CPU execution, while the Triton pays fixed overhead per segment.
