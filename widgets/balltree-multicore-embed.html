@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Tree — Implementation View</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        .bti-widget {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #1a1a1a;
+            margin: 2em 0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bti-widget { color: #e0e0e0; }
+            .bti-widget .panel { background: #1a1a1a; border-color: #333; }
+            .bti-widget .mem-cell { background: #252525; color: #555; }
+            .bti-widget .btn, .bti-widget .pb { background: #111; border-color: #333; color: #e0e0e0; }
+            .bti-widget .btn-p { background: #e0e0e0; color: #111; }
+            .bti-widget .code-line { background: #151515; }
+        }
+
+        .bti-widget .layout {
+            display: grid;
+            grid-template-columns: 140px 1fr 140px;
+            gap: 12px;
+        }
+
+        .bti-widget .panel {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            padding: 10px;
+        }
+
+        .bti-widget .panel-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .bti-widget .canvas-area {
+            height: 140px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .bti-widget .canvas-area svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .bti-widget .mem-section {
+            margin-bottom: 10px;
+        }
+
+        .bti-widget .mem-label {
+            font-size: 0.6rem;
+            color: #888;
+            margin-bottom: 3px;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .bti-widget .mem-row {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+
+        .bti-widget .mem-cell {
+            width: 20px;
+            height: 20px;
+            background: #eee;
+            border-radius: 2px;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            transition: all 0.15s ease;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .bti-widget .mem-cell.read { background: #2a9d8f; color: #fff; }
+        .bti-widget .mem-cell.write { background: #e76f51; color: #fff; }
+        .bti-widget .mem-cell.filled { background: #1d3557; color: #fff; }
+        .bti-widget .mem-cell.dup { opacity: 0.4; }
+
+        .bti-widget .ctrl {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding: 8px 10px;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            margin-bottom: 12px;
+        }
+
+        .bti-widget .btn {
+            padding: 4px 10px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #fff;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
+        .bti-widget .btn:hover { border-color: #999; }
+        .bti-widget .btn-p { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+        .bti-widget .sep { width: 1px; height: 16px; background: #ddd; }
+
+        .bti-widget .playback { display: flex; align-items: center; gap: 3px; }
+
+        .bti-widget .pb {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #fff;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bti-widget .pb:hover { border-color: #999; }
+        .bti-widget .pb.on { background: #1a1a1a; color: #fff; }
+
+        .bti-widget .prog {
+            width: 60px;
+            height: 2px;
+            background: #ddd;
+            border-radius: 1px;
+            margin: 0 6px;
+            overflow: hidden;
+        }
+
+        .bti-widget .prog-fill {
+            height: 100%;
+            background: #c1121f;
+            width: 0%;
+        }
+
+        .bti-widget .phase {
+            font-size: 0.6rem;
+            color: #888;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .bti-widget .phase.on { color: #c1121f; }
+
+        .bti-widget .call-frame {
+            font-size: 0.6rem;
+            font-family: 'SF Mono', Consolas, monospace;
+            padding: 4px 6px;
+            background: #fff;
+            border-left: 2px solid #ddd;
+            margin-bottom: 3px;
+            color: #666;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bti-widget .call-frame { background: #111; border-color: #333; }
+        }
+
+        .bti-widget .call-frame.on {
+            border-color: #c1121f;
+            color: #1a1a1a;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bti-widget .call-frame.on { color: #e0e0e0; }
+        }
+
+        .bti-widget .code-box {
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 0.6rem;
+            margin-top: 10px;
+        }
+
+        .bti-widget .code-line {
+            padding: 2px 6px;
+            background: #f0f0f0;
+            margin-bottom: 1px;
+            border-radius: 1px;
+            color: #666;
+        }
+
+        .bti-widget .code-line.on {
+            background: rgba(193, 18, 31, 0.1);
+            color: #1a1a1a;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bti-widget .code-line.on { color: #e0e0e0; }
+        }
+
+        .bti-widget .code-line .kw { color: #1d3557; }
+        .bti-widget .code-line .fn { color: #c1121f; }
+
+        .bti-widget .tree-mini { height: 80px; }
+        .bti-widget .tree-mini svg { width: 100%; height: 100%; }
+
+        .bti-widget .legend {
+            display: flex;
+            gap: 10px;
+            font-size: 0.55rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .bti-widget .legend-item { display: flex; align-items: center; gap: 3px; }
+        .bti-widget .legend-box { width: 8px; height: 8px; border-radius: 1px; }
+
+        @media (max-width: 600px) {
+            .bti-widget .layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bti-widget">
+        <div class="ctrl">
+            <button class="btn" id="bti-gen">Generate</button>
+            <button class="btn btn-p" id="bti-run">Build</button>
+            <button class="btn" id="bti-reset">Reset</button>
+            <div class="sep"></div>
+            <div class="playback">
+                <button class="pb" id="bti-back">⏮</button>
+                <button class="pb" id="bti-play">▶</button>
+                <button class="pb" id="bti-fwd">⏭</button>
+                <div class="prog"><div class="prog-fill" id="bti-prog"></div></div>
+            </div>
+            <div class="sep"></div>
+            <div class="phase" id="bti-phase">idle</div>
+        </div>
+
+        <div class="layout">
+            <div class="panel">
+                <div class="panel-label">Call Stack</div>
+                <div id="bti-stack"></div>
+
+                <div class="panel-label" style="margin-top:12px">Tree</div>
+                <div class="tree-mini" id="bti-tree"></div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-label">Points (L² metric)</div>
+                <div class="canvas-area"><svg id="bti-canvas"></svg></div>
+
+                <div class="mem-section">
+                    <div class="mem-label">data[] reads</div>
+                    <div class="mem-row" id="bti-data"></div>
+                </div>
+
+                <div class="mem-section">
+                    <div class="mem-label">idx[] swaps</div>
+                    <div class="mem-row" id="bti-idx"></div>
+                </div>
+
+                <div class="mem-section">
+                    <div class="mem-label">output[] (BFS layout)</div>
+                    <div class="mem-row" id="bti-out"></div>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-box" style="background:#2a9d8f"></div>read</div>
+                    <div class="legend-item"><div class="legend-box" style="background:#e76f51"></div>write</div>
+                    <div class="legend-item"><div class="legend-box" style="background:#1d3557"></div>output</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-label">Code Path</div>
+                <div class="code-box" id="bti-code"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const N = 8, D = 2;
+        const DC = ['#1d3557','#457b9d','#a8dadc','#c1121f'];
+
+        const S = {
+            data: [], idx: [], out: [], mask: [],
+            steps: [], si: 0, playing: false, speed: 400,
+            maxLvl: Math.ceil(Math.log2(N))
+        };
+
+        const code = [
+            { t: 'build_tree(start, end, out_pos, lvl)', fn: true },
+            { t: '  if leaf: write output[out_pos]', kw: true },
+            { t: '  dim = find_max_spread(start, end)' },
+            { t: '  nth_element(idx, start, mid, end)' },
+            { t: '  build_tree(start, mid, out_pos, lvl+1)', fn: true },
+            { t: '  build_tree(mid, end, out_pos+left_sz, lvl+1)', fn: true },
+        ];
+
+        let svg, gB, gP, W, H;
+
+        function init() {
+            const wrap = document.querySelector('.bti-widget .canvas-area');
+            W = wrap.clientWidth; H = wrap.clientHeight;
+            svg = d3.select('#bti-canvas').attr('width', W).attr('height', H);
+            gB = svg.append('g');
+            gP = svg.append('g');
+
+            renderCode();
+            document.getElementById('bti-gen').onclick = gen;
+            document.getElementById('bti-run').onclick = run;
+            document.getElementById('bti-reset').onclick = reset;
+            document.getElementById('bti-play').onclick = toggle;
+            document.getElementById('bti-back').onclick = back;
+            document.getElementById('bti-fwd').onclick = fwd;
+
+            gen();
+        }
+
+        function gen() {
+            S.data = [];
+            for (let i = 0; i < N; i++) {
+                S.data.push({ x: 20 + Math.random() * (W - 40), y: 15 + Math.random() * (H - 30), id: i });
+            }
+            S.idx = Array.from({ length: N }, (_, i) => i);
+            S.out = Array(N).fill(-1);
+            S.mask = Array(N).fill(false);
+            S.steps = []; S.si = 0;
+
+            renderPoints();
+            renderIdx();
+            renderOut();
+            renderTree(null);
+            document.getElementById('bti-stack').innerHTML = '';
+            document.getElementById('bti-phase').textContent = 'idle';
+            document.getElementById('bti-phase').classList.remove('on');
+            document.getElementById('bti-prog').style.width = '0%';
+            gB.selectAll('*').remove();
+        }
+
+        function run() {
+            S.steps = []; S.si = 0;
+            const idx = [...S.idx];
+            const out = Array(N).fill(-1);
+            const mask = Array(N).fill(false);
+
+            build(idx, out, mask, 0, N, 0, 0, S.maxLvl);
+
+            S.idx = idx; S.out = out; S.mask = mask;
+
+            if (S.steps.length) {
+                S.playing = true;
+                document.getElementById('bti-play').textContent = '⏸';
+                document.getElementById('bti-play').classList.add('on');
+                tick();
+            }
+        }
+
+        function build(idx, out, mask, iS, iE, oS, lvl, maxLvl) {
+            const n = iE - iS;
+            S.steps.push({ t: 'enter', lvl, iS, iE, oS, line: 0 });
+
+            if (lvl === maxLvl) {
+                if (n === 1) {
+                    out[oS] = idx[iS]; out[oS + 1] = idx[iS];
+                    mask[oS] = true; mask[oS + 1] = false;
+                    S.steps.push({ t: 'leaf', lvl, oS, vals: [idx[iS], idx[iS]], dup: true, line: 1 });
+                } else {
+                    out[oS] = idx[iS]; out[oS + 1] = idx[iS + 1];
+                    mask[oS] = true; mask[oS + 1] = true;
+                    S.steps.push({ t: 'leaf', lvl, oS, vals: [idx[iS], idx[iS + 1]], dup: false, line: 1 });
+                }
+                S.steps.push({ t: 'exit', lvl });
+                return;
+            }
+
+            const reads = [];
+            for (let i = iS; i < iE; i++) reads.push(idx[i]);
+            S.steps.push({ t: 'scan', lvl, iS, iE, reads, line: 2 });
+
+            let dim = 0, maxSp = 0;
+            for (let d = 0; d < D; d++) {
+                let mn = d === 0 ? S.data[idx[iS]].x : S.data[idx[iS]].y;
+                let mx = mn;
+                for (let i = iS + 1; i < iE; i++) {
+                    const v = d === 0 ? S.data[idx[i]].x : S.data[idx[i]].y;
+                    mn = Math.min(mn, v); mx = Math.max(mx, v);
+                }
+                if (mx - mn > maxSp) { maxSp = mx - mn; dim = d; }
+            }
+
+            const mid = Math.floor((iS + iE) / 2);
+            const slice = idx.slice(iS, iE);
+            slice.sort((a, b) => (dim === 0 ? S.data[a].x - S.data[b].x : S.data[a].y - S.data[b].y));
+            for (let i = 0; i < slice.length; i++) idx[iS + i] = slice[i];
+
+            S.steps.push({ t: 'part', lvl, iS, iE, newIdx: idx.slice(iS, iE), dim, line: 3 });
+
+            const leftSz = (1 << (maxLvl - lvl - 1)) * 2;
+
+            S.steps.push({ t: 'rec_l', lvl, cS: iS, cE: mid, cO: oS, line: 4 });
+            build(idx, out, mask, iS, mid, oS, lvl + 1, maxLvl);
+
+            S.steps.push({ t: 'rec_r', lvl, cS: mid, cE: iE, cO: oS + leftSz, line: 5 });
+            build(idx, out, mask, mid, iE, oS + leftSz, lvl + 1, maxLvl);
+
+            S.steps.push({ t: 'exit', lvl });
+        }
+
+        function renderStep(i) {
+            const s = S.steps[i];
+            if (!s) return;
+
+            document.querySelectorAll('.bti-widget .mem-cell').forEach(c => c.classList.remove('read', 'write'));
+            document.querySelectorAll('.bti-widget .code-line').forEach(c => c.classList.remove('on'));
+
+            document.getElementById('bti-phase').textContent = s.t;
+            document.getElementById('bti-phase').classList.add('on');
+
+            const line = document.querySelector(`.bti-widget .code-line[data-l="${s.line}"]`);
+            if (line) line.classList.add('on');
+
+            if (s.t === 'scan') {
+                s.reads.forEach(r => {
+                    const c = document.querySelector(`#bti-idx .mem-cell[data-i="${s.iS + s.reads.indexOf(r)}"]`);
+                    if (c) c.classList.add('read');
+                });
+            }
+
+            if (s.t === 'part') {
+                s.newIdx.forEach((v, j) => {
+                    const c = document.querySelector(`#bti-idx .mem-cell[data-i="${s.iS + j}"]`);
+                    if (c) { c.classList.add('write'); c.textContent = v; }
+                });
+            }
+
+            if (s.t === 'leaf') {
+                const c0 = document.querySelector(`#bti-out .mem-cell[data-i="${s.oS}"]`);
+                const c1 = document.querySelector(`#bti-out .mem-cell[data-i="${s.oS + 1}"]`);
+                if (c0) { c0.classList.add('filled'); c0.textContent = s.vals[0]; }
+                if (c1) { c1.classList.add('filled'); c1.textContent = s.vals[1]; if (s.dup) c1.classList.add('dup'); }
+            }
+
+            renderStack(i);
+            renderTree(s);
+            renderBalls(i);
+
+            document.getElementById('bti-prog').style.width = ((i + 1) / S.steps.length * 100) + '%';
+        }
+
+        function renderStack(si) {
+            const stack = [];
+            for (let i = 0; i <= si; i++) {
+                if (S.steps[i].t === 'enter') stack.push(S.steps[i]);
+                else if (S.steps[i].t === 'exit') stack.pop();
+            }
+            document.getElementById('bti-stack').innerHTML = stack.map((s, j) =>
+                `<div class="call-frame ${j === stack.length - 1 ? 'on' : ''}">L${s.lvl} [${s.iS}:${s.iE}]→${s.oS}</div>`
+            ).join('');
+        }
+
+        function renderBalls(si) {
+            gB.selectAll('*').remove();
+            const drawn = new Set();
+
+            for (let i = 0; i <= si; i++) {
+                const s = S.steps[i];
+                if ((s.t === 'scan' || s.t === 'leaf') && !drawn.has(`${s.iS}-${s.iE}`)) {
+                    drawn.add(`${s.iS}-${s.iE}`);
+                    const pts = [];
+                    for (let j = s.iS; j < s.iE; j++) pts.push(S.data[S.idx[j]] || S.data[j]);
+                    if (pts.length === 0) continue;
+
+                    const cx = d3.mean(pts, p => p.x);
+                    const cy = d3.mean(pts, p => p.y);
+                    const r = d3.max(pts, p => Math.hypot(p.x - cx, p.y - cy)) || 5;
+
+                    const isActive = i === si;
+                    gB.append('circle')
+                        .attr('cx', cx).attr('cy', cy).attr('r', r)
+                        .attr('fill', 'none')
+                        .attr('stroke', DC[Math.min(s.lvl, DC.length - 1)])
+                        .attr('stroke-width', isActive ? 1.5 : 1)
+                        .attr('stroke-dasharray', s.t === 'leaf' ? 'none' : '3,2')
+                        .attr('opacity', isActive ? 0.7 : 0.25);
+                }
+            }
+        }
+
+        function renderPoints() {
+            gP.selectAll('*').remove();
+            gP.selectAll('circle')
+                .data(S.data)
+                .enter()
+                .append('circle')
+                .attr('cx', d => d.x).attr('cy', d => d.y)
+                .attr('r', 4)
+                .attr('fill', '#1d3557');
+
+            gP.selectAll('text')
+                .data(S.data)
+                .enter()
+                .append('text')
+                .attr('x', d => d.x).attr('y', d => d.y - 6)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '8px')
+                .attr('fill', '#666')
+                .text(d => d.id);
+        }
+
+        function renderIdx() {
+            const el = document.getElementById('bti-idx');
+            el.innerHTML = S.idx.map((v, i) => `<div class="mem-cell" data-i="${i}">${v}</div>`).join('');
+        }
+
+        function renderOut() {
+            const el = document.getElementById('bti-out');
+            el.innerHTML = S.out.map((v, i) => `<div class="mem-cell" data-i="${i}">${v >= 0 ? v : ''}</div>`).join('');
+        }
+
+        function renderCode() {
+            document.getElementById('bti-code').innerHTML = code.map((c, i) => {
+                let t = c.t;
+                if (c.fn) t = `<span class="fn">${t}</span>`;
+                if (c.kw) t = `<span class="kw">${t}</span>`;
+                return `<div class="code-line" data-l="${i}">${t}</div>`;
+            }).join('');
+        }
+
+        function renderTree(step) {
+            const cont = document.getElementById('bti-tree');
+            cont.innerHTML = '';
+            const w = 120, h = 70;
+            const ts = d3.select(cont).append('svg').attr('width', w).attr('height', h);
+
+            const nodes = [], links = [];
+            function tr(lvl, x, y, dx, iS, iE, oS) {
+                nodes.push({ lvl, x, y, iS, iE, oS });
+                if (lvl < S.maxLvl) {
+                    const mid = Math.floor((iS + iE) / 2);
+                    const leftSz = (1 << (S.maxLvl - lvl - 1)) * 2;
+                    links.push({ x1: x, y1: y, x2: x - dx, y2: y + 18 });
+                    links.push({ x1: x, y1: y, x2: x + dx, y2: y + 18 });
+                    tr(lvl + 1, x - dx, y + 18, dx / 2, iS, mid, oS);
+                    tr(lvl + 1, x + dx, y + 18, dx / 2, mid, iE, oS + leftSz);
+                }
+            }
+            tr(0, w / 2, 12, w / 5, 0, N, 0);
+
+            ts.selectAll('line').data(links).enter().append('line')
+                .attr('x1', d => d.x1).attr('y1', d => d.y1)
+                .attr('x2', d => d.x2).attr('y2', d => d.y2)
+                .attr('stroke', '#ccc');
+
+            ts.selectAll('circle').data(nodes).enter().append('circle')
+                .attr('cx', d => d.x).attr('cy', d => d.y).attr('r', 6)
+                .attr('fill', d => {
+                    if (step && step.lvl === d.lvl && step.iS === d.iS && step.iE === d.iE) return '#c1121f';
+                    return DC[Math.min(d.lvl, DC.length - 1)];
+                })
+                .attr('opacity', d => step && d.lvl <= step.lvl ? 1 : 0.3);
+        }
+
+        function tick() {
+            if (!S.playing || S.si >= S.steps.length) {
+                S.playing = false;
+                document.getElementById('bti-play').textContent = '▶';
+                document.getElementById('bti-play').classList.remove('on');
+                return;
+            }
+            renderStep(S.si);
+            S.si++;
+            setTimeout(tick, S.speed);
+        }
+
+        function toggle() {
+            if (S.playing) {
+                S.playing = false;
+                document.getElementById('bti-play').textContent = '▶';
+                document.getElementById('bti-play').classList.remove('on');
+            } else if (S.steps.length) {
+                if (S.si >= S.steps.length) S.si = 0;
+                S.playing = true;
+                document.getElementById('bti-play').textContent = '⏸';
+                document.getElementById('bti-play').classList.add('on');
+                tick();
+            }
+        }
+
+        function fwd() { if (S.si < S.steps.length) { renderStep(S.si); S.si++; } }
+        function back() { if (S.si > 0) { S.si--; renderStep(S.si); } }
+
+        function reset() {
+            S.playing = false; S.si = 0;
+            document.getElementById('bti-play').textContent = '▶';
+            document.getElementById('bti-play').classList.remove('on');
+            document.getElementById('bti-prog').style.width = '0%';
+            document.getElementById('bti-phase').textContent = 'idle';
+            document.getElementById('bti-phase').classList.remove('on');
+            document.getElementById('bti-stack').innerHTML = '';
+            renderIdx(); renderOut();
+            document.querySelectorAll('.bti-widget .mem-cell').forEach(c => c.classList.remove('read', 'write', 'filled', 'dup'));
+            document.querySelectorAll('.bti-widget .code-line').forEach(c => c.classList.remove('on'));
+            gB.selectAll('*').remove();
+            renderTree(null);
+        }
+
+        init();
+    })();
+    </script>
+</body>
+</html>

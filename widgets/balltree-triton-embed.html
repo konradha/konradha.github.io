@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Tree — GPU Implementation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        .btg-widget {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #1a1a1a;
+            margin: 2em 0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btg-widget { color: #e0e0e0; }
+            .btg-widget .panel { background: #1a1a1a; border-color: #333; }
+            .btg-widget .mem-cell { background: #252525; color: #555; }
+            .btg-widget .btn, .btg-widget .pb { background: #111; border-color: #333; color: #e0e0e0; }
+            .btg-widget .btn-p { background: #e0e0e0; color: #111; }
+            .btg-widget .code-line { background: #151515; }
+            .btg-widget .thread { background: #252525; }
+            .btg-widget .warp-box { border-color: #333; }
+        }
+
+        .btg-widget .layout {
+            display: grid;
+            grid-template-columns: 160px 1fr 140px;
+            gap: 12px;
+        }
+
+        .btg-widget .panel {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            padding: 10px;
+        }
+
+        .btg-widget .panel-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .btg-widget .canvas-area {
+            height: 120px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .btg-widget .canvas-area svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .btg-widget .ctrl {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding: 8px 10px;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btg-widget .btn {
+            padding: 4px 10px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #fff;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
+        .btg-widget .btn:hover { border-color: #999; }
+        .btg-widget .btn-p { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+
+        .btg-widget .sep { width: 1px; height: 16px; background: #ddd; }
+
+        .btg-widget .playback { display: flex; align-items: center; gap: 3px; }
+
+        .btg-widget .pb {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #fff;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btg-widget .pb:hover { border-color: #999; }
+        .btg-widget .pb.on { background: #1a1a1a; color: #fff; }
+
+        .btg-widget .prog {
+            width: 60px;
+            height: 2px;
+            background: #ddd;
+            border-radius: 1px;
+            margin: 0 6px;
+            overflow: hidden;
+        }
+
+        .btg-widget .prog-fill {
+            height: 100%;
+            background: #c1121f;
+            width: 0%;
+        }
+
+        .btg-widget .phase {
+            font-size: 0.6rem;
+            color: #888;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .btg-widget .phase.on { color: #c1121f; }
+
+        .btg-widget .level-ind {
+            font-size: 0.6rem;
+            color: #666;
+            font-family: 'SF Mono', Consolas, monospace;
+            padding: 2px 6px;
+            background: #eee;
+            border-radius: 2px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btg-widget .level-ind { background: #252525; color: #888; }
+        }
+
+        .btg-widget .gpu-section {
+            margin-bottom: 12px;
+        }
+
+        .btg-widget .gpu-label {
+            font-size: 0.55rem;
+            color: #888;
+            margin-bottom: 4px;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .btg-widget .blocks-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btg-widget .block-box {
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            padding: 4px;
+            min-width: 60px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btg-widget .block-box { border-color: #333; }
+        }
+
+        .btg-widget .block-box.active {
+            border-color: #c1121f;
+            background: rgba(193, 18, 31, 0.05);
+        }
+
+        .btg-widget .block-id {
+            font-size: 0.5rem;
+            color: #999;
+            font-family: 'SF Mono', Consolas, monospace;
+            margin-bottom: 2px;
+        }
+
+        .btg-widget .warps {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .btg-widget .warp-box {
+            display: flex;
+            gap: 1px;
+            padding: 2px;
+            border: 1px solid #eee;
+            border-radius: 1px;
+        }
+
+        .btg-widget .thread {
+            width: 6px;
+            height: 10px;
+            background: #eee;
+            border-radius: 1px;
+            font-size: 5px;
+            transition: background 0.15s ease;
+        }
+
+        .btg-widget .thread.read { background: #2a9d8f; }
+        .btg-widget .thread.write { background: #e76f51; }
+        .btg-widget .thread.idle { background: #ddd; }
+
+        @media (prefers-color-scheme: dark) {
+            .btg-widget .thread.idle { background: #333; }
+        }
+
+        .btg-widget .mem-section {
+            margin-bottom: 8px;
+        }
+
+        .btg-widget .mem-label {
+            font-size: 0.55rem;
+            color: #888;
+            margin-bottom: 3px;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .btg-widget .mem-row {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+
+        .btg-widget .mem-cell {
+            width: 18px;
+            height: 18px;
+            background: #eee;
+            border-radius: 2px;
+            font-size: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            transition: all 0.15s ease;
+            font-family: 'SF Mono', Consolas, monospace;
+        }
+
+        .btg-widget .mem-cell.read { background: #2a9d8f; color: #fff; }
+        .btg-widget .mem-cell.write { background: #e76f51; color: #fff; }
+        .btg-widget .mem-cell.filled { background: #1d3557; color: #fff; }
+
+        .btg-widget .segs-row {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+
+        .btg-widget .seg {
+            flex: 1;
+            height: 16px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: #fff;
+            font-family: 'SF Mono', Consolas, monospace;
+            transition: all 0.2s ease;
+        }
+
+        .btg-widget .seg.active {
+            box-shadow: 0 0 0 2px rgba(193, 18, 31, 0.4);
+        }
+
+        .btg-widget .code-box {
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 0.55rem;
+        }
+
+        .btg-widget .code-line {
+            padding: 2px 5px;
+            background: #f0f0f0;
+            margin-bottom: 1px;
+            border-radius: 1px;
+            color: #666;
+        }
+
+        .btg-widget .code-line.on {
+            background: rgba(193, 18, 31, 0.1);
+            color: #1a1a1a;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btg-widget .code-line.on { color: #e0e0e0; }
+        }
+
+        .btg-widget .code-line .kw { color: #1d3557; }
+        .btg-widget .code-line .fn { color: #c1121f; }
+        .btg-widget .code-line .cm { color: #999; }
+
+        .btg-widget .legend {
+            display: flex;
+            gap: 8px;
+            font-size: 0.5rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .btg-widget .legend-item { display: flex; align-items: center; gap: 3px; }
+        .btg-widget .legend-box { width: 8px; height: 8px; border-radius: 1px; }
+
+        .btg-widget .insight {
+            font-size: 0.6rem;
+            color: #666;
+            margin-top: 10px;
+            padding: 6px;
+            background: #f5f5f5;
+            border-radius: 2px;
+            border-left: 2px solid #457b9d;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btg-widget .insight { background: #1a1a1a; color: #888; }
+        }
+
+        @media (max-width: 700px) {
+            .btg-widget .layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="btg-widget">
+        <div class="ctrl">
+            <button class="btn" id="btg-gen">Generate</button>
+            <button class="btn btn-p" id="btg-run">Run</button>
+            <button class="btn" id="btg-reset">Reset</button>
+            <div class="sep"></div>
+            <div class="playback">
+                <button class="pb" id="btg-back">⏮</button>
+                <button class="pb" id="btg-play">▶</button>
+                <button class="pb" id="btg-fwd">⏭</button>
+                <div class="prog"><div class="prog-fill" id="btg-prog"></div></div>
+            </div>
+            <div class="sep"></div>
+            <div class="level-ind" id="btg-level">level 0/0</div>
+            <div class="phase" id="btg-phase">idle</div>
+        </div>
+
+        <div class="layout">
+            <div class="panel">
+                <div class="panel-label">GPU Blocks</div>
+                <div class="gpu-section">
+                    <div class="gpu-label">1 block per segment</div>
+                    <div class="blocks-row" id="btg-blocks"></div>
+                </div>
+
+                <div class="panel-label" style="margin-top:12px">Segments</div>
+                <div class="segs-row" id="btg-segs"></div>
+
+                <div class="insight">
+                    Each level: segments double, work halves. All blocks run in parallel.
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-label">Points (L² metric)</div>
+                <div class="canvas-area"><svg id="btg-canvas"></svg></div>
+
+                <div class="mem-section">
+                    <div class="mem-label">data[] — coalesced reads across threads</div>
+                    <div class="mem-row" id="btg-data"></div>
+                </div>
+
+                <div class="mem-section">
+                    <div class="mem-label">indices[] — indirect access</div>
+                    <div class="mem-row" id="btg-idx"></div>
+                </div>
+
+                <div class="mem-section">
+                    <div class="mem-label">proj[] — temp for partition sort key</div>
+                    <div class="mem-row" id="btg-proj"></div>
+                </div>
+
+                <div class="mem-section">
+                    <div class="mem-label">output[] — final BFS layout</div>
+                    <div class="mem-row" id="btg-out"></div>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-box" style="background:#2a9d8f"></div>read</div>
+                    <div class="legend-item"><div class="legend-box" style="background:#e76f51"></div>write</div>
+                    <div class="legend-item"><div class="legend-box" style="background:#1d3557"></div>output</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-label">Kernel Path</div>
+                <div class="code-box" id="btg-code"></div>
+
+                <div class="panel-label" style="margin-top:12px">Key Diff vs CPU</div>
+                <div class="insight" style="border-left-color:#c1121f;">
+                    CPU: DFS recursion<br>
+                    GPU: level-sync BFS<br><br>
+                    <code style="font-size:0.5rem">nth_element</code> → <code style="font-size:0.5rem">argsort</code> (radix)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const N = 8, D = 2;
+        const DC = ['#1d3557','#457b9d','#a8dadc','#c1121f','#e07a5f','#81b29a'];
+
+        const S = {
+            data: [], idx: [], proj: [], out: [],
+            segs: [], steps: [], si: 0, playing: false, speed: 600,
+            maxLvl: Math.ceil(Math.log2(N))
+        };
+
+        const code = [
+            { t: '<span class="kw">for</span> level <span class="kw">in</span> range(max_level):', k: true },
+            { t: '  <span class="fn">_compute_split_kernel</span>[n_segs]', fn: true },
+            { t: '    <span class="cm">// find max spread dim</span>' },
+            { t: '    <span class="cm">// write proj[] values</span>' },
+            { t: '  <span class="fn">_partition_and_split</span>', fn: true },
+            { t: '    <span class="cm">// argsort by (seg, proj)</span>' },
+            { t: '    <span class="cm">// split segments at median</span>' },
+            { t: '<span class="fn">_write_leaves_kernel</span>[n_segs]', fn: true },
+        ];
+
+        let svg, gB, gP, W, H;
+
+        function init() {
+            const wrap = document.querySelector('.btg-widget .canvas-area');
+            W = wrap.clientWidth; H = wrap.clientHeight;
+            svg = d3.select('#btg-canvas').attr('width', W).attr('height', H);
+            gB = svg.append('g');
+            gP = svg.append('g');
+
+            renderCode();
+            document.getElementById('btg-gen').onclick = gen;
+            document.getElementById('btg-run').onclick = run;
+            document.getElementById('btg-reset').onclick = reset;
+            document.getElementById('btg-play').onclick = toggle;
+            document.getElementById('btg-back').onclick = back;
+            document.getElementById('btg-fwd').onclick = fwd;
+
+            gen();
+        }
+
+        function gen() {
+            S.data = [];
+            for (let i = 0; i < N; i++) {
+                S.data.push({ x: 15 + Math.random() * (W - 30), y: 10 + Math.random() * (H - 20), id: i });
+            }
+            S.idx = Array.from({ length: N }, (_, i) => i);
+            S.proj = Array(N).fill(0);
+            S.out = Array(N).fill(-1);
+            S.segs = [{ start: 0, end: N, level: 0 }];
+            S.steps = []; S.si = 0;
+
+            renderPoints();
+            renderIdx();
+            renderProj();
+            renderOut();
+            renderSegs();
+            renderBlocks([]);
+            document.getElementById('btg-phase').textContent = 'idle';
+            document.getElementById('btg-phase').classList.remove('on');
+            document.getElementById('btg-level').textContent = 'level 0/' + S.maxLvl;
+            document.getElementById('btg-prog').style.width = '0%';
+            gB.selectAll('*').remove();
+        }
+
+        function run() {
+            S.steps = []; S.si = 0;
+            const idx = [...S.idx];
+            const proj = Array(N).fill(0);
+            const out = Array(N).fill(-1);
+            let segs = [{ start: 0, end: N, level: 0, id: 0 }];
+
+            for (let level = 0; level < S.maxLvl; level++) {
+                const activeSegs = segs.filter(s => (s.end - s.start) > 1);
+                if (activeSegs.length === 0) break;
+
+                S.steps.push({
+                    t: 'level_start', level, segs: segs.map(s => ({...s})), line: 0
+                });
+
+                const dataReads = [];
+                const projWrites = [];
+                const splitDims = [];
+
+                for (const seg of activeSegs) {
+                    const pts = [];
+                    for (let i = seg.start; i < seg.end; i++) {
+                        pts.push(idx[i]);
+                        dataReads.push(idx[i]);
+                    }
+
+                    let dim = 0, maxSp = 0;
+                    for (let d = 0; d < D; d++) {
+                        let mn = d === 0 ? S.data[pts[0]].x : S.data[pts[0]].y;
+                        let mx = mn;
+                        for (const p of pts) {
+                            const v = d === 0 ? S.data[p].x : S.data[p].y;
+                            mn = Math.min(mn, v); mx = Math.max(mx, v);
+                        }
+                        if (mx - mn > maxSp) { maxSp = mx - mn; dim = d; }
+                    }
+                    splitDims.push({ seg: seg.id, dim });
+
+                    for (let i = seg.start; i < seg.end; i++) {
+                        const p = idx[i];
+                        proj[i] = dim === 0 ? S.data[p].x : S.data[p].y;
+                        projWrites.push(i);
+                    }
+                }
+
+                S.steps.push({
+                    t: 'compute_split', level, segs: activeSegs.map(s => s.id),
+                    dataReads, projWrites, splitDims, line: 1
+                });
+
+                for (const seg of activeSegs) {
+                    const slice = [];
+                    for (let i = seg.start; i < seg.end; i++) {
+                        slice.push({ idx: idx[i], proj: proj[i] });
+                    }
+                    slice.sort((a, b) => a.proj - b.proj);
+                    for (let i = 0; i < slice.length; i++) {
+                        idx[seg.start + i] = slice[i].idx;
+                    }
+                }
+
+                S.steps.push({
+                    t: 'partition', level, segs: activeSegs.map(s => s.id),
+                    newIdx: [...idx], line: 4
+                });
+
+                const newSegs = [];
+                let segId = 0;
+                for (const seg of segs) {
+                    const n = seg.end - seg.start;
+                    if (n <= 1) {
+                        newSegs.push({ ...seg, id: segId++ });
+                    } else {
+                        const mid = seg.start + Math.floor(n / 2);
+                        newSegs.push({ start: seg.start, end: mid, level: level + 1, id: segId++ });
+                        newSegs.push({ start: mid, end: seg.end, level: level + 1, id: segId++ });
+                    }
+                }
+                segs = newSegs;
+
+                S.steps.push({
+                    t: 'split_done', level, segs: segs.map(s => ({...s})), line: 6
+                });
+            }
+
+            const outWrites = [];
+            let leafId = 0;
+            for (const seg of segs) {
+                const outPos = leafId * 2;
+                const n = seg.end - seg.start;
+                if (n === 0) {
+                    out[outPos] = -1; out[outPos + 1] = -1;
+                } else if (n === 1) {
+                    out[outPos] = idx[seg.start]; out[outPos + 1] = idx[seg.start];
+                } else {
+                    out[outPos] = idx[seg.start]; out[outPos + 1] = idx[seg.start + 1];
+                }
+                outWrites.push(outPos, outPos + 1);
+                leafId++;
+            }
+
+            S.steps.push({
+                t: 'write_leaves', segs: segs.map(s => s.id), outWrites, newOut: [...out], line: 7
+            });
+
+            S.idx = idx; S.proj = proj; S.out = out; S.segs = segs;
+
+            if (S.steps.length) {
+                S.playing = true;
+                document.getElementById('btg-play').textContent = '⏸';
+                document.getElementById('btg-play').classList.add('on');
+                tick();
+            }
+        }
+
+        function renderStep(i) {
+            const s = S.steps[i];
+            if (!s) return;
+
+            document.querySelectorAll('.btg-widget .mem-cell').forEach(c => c.classList.remove('read', 'write', 'filled'));
+            document.querySelectorAll('.btg-widget .code-line').forEach(c => c.classList.remove('on'));
+            document.querySelectorAll('.btg-widget .seg').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.btg-widget .block-box').forEach(c => c.classList.remove('active'));
+
+            document.getElementById('btg-phase').textContent = s.t;
+            document.getElementById('btg-phase').classList.add('on');
+
+            if (s.level !== undefined) {
+                document.getElementById('btg-level').textContent = `level ${s.level}/${S.maxLvl}`;
+            }
+
+            const line = document.querySelector(`.btg-widget .code-line[data-l="${s.line}"]`);
+            if (line) line.classList.add('on');
+
+            if (s.t === 'level_start' || s.t === 'split_done') {
+                renderSegsFrom(s.segs);
+            }
+
+            if (s.t === 'compute_split') {
+                s.dataReads.forEach(r => {
+                    const c = document.querySelector(`#btg-data .mem-cell[data-i="${r}"]`);
+                    if (c) c.classList.add('read');
+                });
+                s.projWrites.forEach(w => {
+                    const c = document.querySelector(`#btg-proj .mem-cell[data-i="${w}"]`);
+                    if (c) c.classList.add('write');
+                });
+                renderBlocks(s.segs, 'read');
+            }
+
+            if (s.t === 'partition') {
+                s.newIdx.forEach((v, j) => {
+                    const c = document.querySelector(`#btg-idx .mem-cell[data-i="${j}"]`);
+                    if (c) { c.textContent = v; c.classList.add('write'); }
+                });
+                renderBlocks(s.segs, 'write');
+            }
+
+            if (s.t === 'write_leaves') {
+                s.outWrites.forEach(w => {
+                    const c = document.querySelector(`#btg-out .mem-cell[data-i="${w}"]`);
+                    if (c && s.newOut[w] >= 0) {
+                        c.classList.add('filled');
+                        c.textContent = s.newOut[w];
+                    }
+                });
+                renderBlocks(s.segs, 'write');
+            }
+
+            renderBalls(i);
+
+            document.getElementById('btg-prog').style.width = ((i + 1) / S.steps.length * 100) + '%';
+        }
+
+        function renderSegsFrom(segs) {
+            const el = document.getElementById('btg-segs');
+            el.innerHTML = segs.map((s, i) => {
+                const w = ((s.end - s.start) / N * 100) + '%';
+                const col = DC[Math.min(s.level, DC.length - 1)];
+                return `<div class="seg" data-id="${s.id}" style="background:${col};flex:${s.end - s.start}">${s.start}-${s.end}</div>`;
+            }).join('');
+        }
+
+        function renderBlocks(activeIds, mode) {
+            const el = document.getElementById('btg-blocks');
+            const numBlocks = Math.max(activeIds.length, 1);
+
+            el.innerHTML = '';
+            for (let b = 0; b < numBlocks; b++) {
+                const isActive = activeIds.includes(b);
+                const box = document.createElement('div');
+                box.className = 'block-box' + (isActive ? ' active' : '');
+                box.innerHTML = `
+                    <div class="block-id">block ${b}</div>
+                    <div class="warps">
+                        <div class="warp-box">
+                            ${Array(8).fill(0).map((_, t) => 
+                                `<div class="thread ${isActive ? mode : 'idle'}"></div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+                el.appendChild(box);
+            }
+        }
+
+        function renderBalls(si) {
+            gB.selectAll('*').remove();
+
+            for (let i = 0; i <= si; i++) {
+                const s = S.steps[i];
+                if (s.t === 'split_done' || s.t === 'level_start') {
+                    s.segs.forEach(seg => {
+                        const pts = [];
+                        for (let j = seg.start; j < seg.end; j++) {
+                            const p = S.data[S.idx[j]] || S.data[j];
+                            if (p) pts.push(p);
+                        }
+                        if (pts.length === 0) return;
+
+                        const cx = d3.mean(pts, p => p.x);
+                        const cy = d3.mean(pts, p => p.y);
+                        const r = d3.max(pts, p => Math.hypot(p.x - cx, p.y - cy)) || 5;
+
+                        gB.append('circle')
+                            .attr('cx', cx).attr('cy', cy).attr('r', r)
+                            .attr('fill', 'none')
+                            .attr('stroke', DC[Math.min(seg.level, DC.length - 1)])
+                            .attr('stroke-width', 1)
+                            .attr('stroke-dasharray', pts.length <= 2 ? 'none' : '3,2')
+                            .attr('opacity', 0.35);
+                    });
+                }
+            }
+        }
+
+        function renderPoints() {
+            gP.selectAll('*').remove();
+            gP.selectAll('circle')
+                .data(S.data)
+                .enter()
+                .append('circle')
+                .attr('cx', d => d.x).attr('cy', d => d.y)
+                .attr('r', 3.5)
+                .attr('fill', '#1d3557');
+
+            gP.selectAll('text')
+                .data(S.data)
+                .enter()
+                .append('text')
+                .attr('x', d => d.x).attr('y', d => d.y - 5)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '7px')
+                .attr('fill', '#666')
+                .text(d => d.id);
+        }
+
+        function renderIdx() {
+            const el = document.getElementById('btg-idx');
+            el.innerHTML = S.idx.map((v, i) => `<div class="mem-cell" data-i="${i}">${v}</div>`).join('');
+        }
+
+        function renderProj() {
+            const el = document.getElementById('btg-proj');
+            el.innerHTML = S.proj.map((v, i) => `<div class="mem-cell" data-i="${i}"></div>`).join('');
+        }
+
+        function renderOut() {
+            const el = document.getElementById('btg-out');
+            el.innerHTML = S.out.map((v, i) => `<div class="mem-cell" data-i="${i}">${v >= 0 ? v : ''}</div>`).join('');
+        }
+
+        function renderSegs() {
+            renderSegsFrom(S.segs);
+        }
+
+        function renderCode() {
+            document.getElementById('btg-code').innerHTML = code.map((c, i) =>
+                `<div class="code-line" data-l="${i}">${c.t}</div>`
+            ).join('');
+        }
+
+        function tick() {
+            if (!S.playing || S.si >= S.steps.length) {
+                S.playing = false;
+                document.getElementById('btg-play').textContent = '▶';
+                document.getElementById('btg-play').classList.remove('on');
+                return;
+            }
+            renderStep(S.si);
+            S.si++;
+            setTimeout(tick, S.speed);
+        }
+
+        function toggle() {
+            if (S.playing) {
+                S.playing = false;
+                document.getElementById('btg-play').textContent = '▶';
+                document.getElementById('btg-play').classList.remove('on');
+            } else if (S.steps.length) {
+                if (S.si >= S.steps.length) S.si = 0;
+                S.playing = true;
+                document.getElementById('btg-play').textContent = '⏸';
+                document.getElementById('btg-play').classList.add('on');
+                tick();
+            }
+        }
+
+        function fwd() { if (S.si < S.steps.length) { renderStep(S.si); S.si++; } }
+        function back() { if (S.si > 0) { S.si--; renderStep(S.si); } }
+
+        function reset() {
+            S.playing = false; S.si = 0;
+            document.getElementById('btg-play').textContent = '▶';
+            document.getElementById('btg-play').classList.remove('on');
+            document.getElementById('btg-prog').style.width = '0%';
+            document.getElementById('btg-phase').textContent = 'idle';
+            document.getElementById('btg-phase').classList.remove('on');
+            document.getElementById('btg-level').textContent = 'level 0/' + S.maxLvl;
+            S.segs = [{ start: 0, end: N, level: 0 }];
+            renderIdx(); renderProj(); renderOut(); renderSegs();
+            renderBlocks([]);
+            document.querySelectorAll('.btg-widget .mem-cell').forEach(c => c.classList.remove('read', 'write', 'filled'));
+            document.querySelectorAll('.btg-widget .code-line').forEach(c => c.classList.remove('on'));
+            gB.selectAll('*').remove();
+        }
+
+        init();
+    })();
+    </script>
+</body>
+</html>

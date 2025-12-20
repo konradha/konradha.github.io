@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        .bt-widget {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            margin: 2em 0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bt-widget {
+                color: #e0e0e0;
+            }
+            .bt-widget .canvas-area {
+                background: #1a1a1a;
+                border-color: #333;
+            }
+            .bt-widget .ctrl {
+                background: #1a1a1a;
+                border-color: #333;
+            }
+            .bt-widget select,
+            .bt-widget .btn {
+                background: #111;
+                border-color: #333;
+                color: #e0e0e0;
+            }
+            .bt-widget .btn-p {
+                background: #e0e0e0;
+                color: #111;
+            }
+            .bt-widget .pb {
+                background: #111;
+                border-color: #333;
+                color: #e0e0e0;
+            }
+            .bt-widget .info {
+                background: #1a1a1a;
+                border-color: #333;
+            }
+        }
+
+        .bt-widget .layout {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bt-widget .canvas-area {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            position: relative;
+            height: 320px;
+        }
+
+        .bt-widget .canvas-area svg {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .bt-widget .hint {
+            position: absolute;
+            bottom: 6px;
+            left: 8px;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .bt-widget .ctrl {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 10px;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .bt-widget .ctrl-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bt-widget .ctrl-group label {
+            color: #666;
+        }
+
+        .bt-widget select {
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            font-size: 11px;
+            background: #fff;
+        }
+
+        .bt-widget input[type="range"] {
+            width: 60px;
+            height: 2px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 1px;
+        }
+
+        .bt-widget input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .bt-widget .btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #fff;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .bt-widget .btn:hover {
+            border-color: #999;
+        }
+
+        .bt-widget .btn-p {
+            background: #1a1a1a;
+            color: #fff;
+            border-color: #1a1a1a;
+        }
+
+        .bt-widget .sep {
+            width: 1px;
+            height: 20px;
+            background: #ddd;
+            margin: 0 4px;
+        }
+
+        .bt-widget .playback {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .bt-widget .pb {
+            width: 22px;
+            height: 22px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            background: #fff;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bt-widget .pb:hover {
+            border-color: #999;
+        }
+
+        .bt-widget .pb.on {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .bt-widget .prog {
+            width: 80px;
+            height: 2px;
+            background: #ddd;
+            border-radius: 1px;
+            margin: 0 6px;
+            overflow: hidden;
+        }
+
+        .bt-widget .prog-fill {
+            height: 100%;
+            background: #c1121f;
+            width: 0%;
+        }
+
+        .bt-widget .info {
+            display: flex;
+            gap: 16px;
+            padding: 8px 10px;
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 2px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .bt-widget .info span {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bt-widget .info span {
+                color: #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bt-widget">
+        <div class="layout">
+            <div class="canvas-area">
+                <svg id="bt-canvas"></svg>
+                <div class="hint">click to add points</div>
+            </div>
+
+            <div class="ctrl">
+                <div class="ctrl-group">
+                    <label>Metric</label>
+                    <select id="bt-metric">
+                        <option value="euclidean">L² circles</option>
+                        <option value="manhattan">L¹ diamonds</option>
+                        <option value="chebyshev">L∞ squares</option>
+                    </select>
+                </div>
+
+                <div class="ctrl-group">
+                    <label>Speed</label>
+                    <input type="range" id="bt-spd" min="50" max="800" value="300">
+                </div>
+
+                <div class="ctrl-group">
+                    <label>Leaf</label>
+                    <input type="range" id="bt-leaf" min="1" max="6" value="3">
+                </div>
+
+                <div class="sep"></div>
+
+                <button class="btn" id="bt-gen">Generate</button>
+                <button class="btn btn-p" id="bt-build">Build</button>
+                <button class="btn" id="bt-clr">Clear</button>
+
+                <div class="sep"></div>
+
+                <div class="playback">
+                    <button class="pb" id="bt-back">⏮</button>
+                    <button class="pb" id="bt-play">▶</button>
+                    <button class="pb" id="bt-fwd">⏭</button>
+                    <div class="prog"><div class="prog-fill" id="bt-prog"></div></div>
+                </div>
+            </div>
+
+            <div class="info">
+                <div>Points: <span id="bt-pts">0</span></div>
+                <div>Nodes: <span id="bt-nodes">0</span></div>
+                <div>Depth: <span id="bt-depth">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const DC = ['#1d3557','#457b9d','#a8dadc','#c1121f','#e07a5f','#81b29a'];
+
+        const S = {
+            pts: [],
+            tree: null,
+            steps: [],
+            si: 0,
+            play: false,
+            spd: 300,
+            leaf: 3,
+            metric: 'euclidean'
+        };
+
+        const M = {
+            euclidean: (a,b) => Math.hypot(a.x-b.x, a.y-b.y),
+            manhattan: (a,b) => Math.abs(a.x-b.x) + Math.abs(a.y-b.y),
+            chebyshev: (a,b) => Math.max(Math.abs(a.x-b.x), Math.abs(a.y-b.y))
+        };
+
+        let svg, W, H, gB, gP;
+
+        function init() {
+            const wrap = document.querySelector('.bt-widget .canvas-area');
+            W = wrap.clientWidth;
+            H = wrap.clientHeight;
+
+            svg = d3.select('#bt-canvas').attr('width', W).attr('height', H);
+            gB = svg.append('g');
+            gP = svg.append('g');
+
+            svg.on('click', e => {
+                if (S.play) return;
+                const [x,y] = d3.pointer(e);
+                S.pts.push({x, y, id: S.pts.length});
+                render();
+                stats();
+            });
+
+            document.getElementById('bt-spd').oninput = e => S.spd = +e.target.value;
+            document.getElementById('bt-leaf').oninput = e => S.leaf = +e.target.value;
+            document.getElementById('bt-metric').onchange = e => {
+                S.metric = e.target.value;
+                if (S.tree) build();
+            };
+
+            document.getElementById('bt-gen').onclick = gen;
+            document.getElementById('bt-build').onclick = build;
+            document.getElementById('bt-clr').onclick = clr;
+            document.getElementById('bt-play').onclick = toggle;
+            document.getElementById('bt-back').onclick = back;
+            document.getElementById('bt-fwd').onclick = fwd;
+
+            window.addEventListener('resize', () => {
+                W = wrap.clientWidth;
+                H = wrap.clientHeight;
+                svg.attr('width', W).attr('height', H);
+                render();
+            });
+        }
+
+        function gen() {
+            S.pts = [];
+            const m = 40, nc = 2 + Math.floor(Math.random()*3);
+            for (let c = 0; c < nc; c++) {
+                const cx = m + Math.random()*(W-2*m);
+                const cy = m + Math.random()*(H-2*m);
+                const sp = 20 + Math.random()*35;
+                const n = 4 + Math.floor(Math.random()*6);
+                for (let i = 0; i < n; i++) {
+                    const a = Math.random()*Math.PI*2;
+                    const r = Math.random()*sp;
+                    S.pts.push({x: cx+Math.cos(a)*r, y: cy+Math.sin(a)*r, id: S.pts.length});
+                }
+            }
+            S.tree = null;
+            S.steps = [];
+            S.si = 0;
+            gB.selectAll('*').remove();
+            render();
+            stats();
+        }
+
+        function build() {
+            if (S.pts.length < 2) return;
+            S.steps = [];
+            S.si = 0;
+            S.tree = bnode(S.pts.slice(), 0);
+            stats();
+            if (S.steps.length) anim();
+        }
+
+        function bnode(pts, d) {
+            if (!pts.length) return null;
+            const node = {pts, d, l: null, r: null, c: null, rad: 0, leaf: pts.length <= S.leaf};
+
+            node.c = {x: d3.mean(pts, p => p.x), y: d3.mean(pts, p => p.y)};
+            S.steps.push({t:'c', node:{...node}, d});
+
+            node.rad = d3.max(pts, p => M[S.metric](p, node.c));
+            S.steps.push({t:'r', node:{...node}, d});
+
+            if (node.leaf) {
+                S.steps.push({t:'leaf', node:{...node}, d});
+                return node;
+            }
+
+            const xs = d3.max(pts, p=>p.x) - d3.min(pts, p=>p.x);
+            const ys = d3.max(pts, p=>p.y) - d3.min(pts, p=>p.y);
+            const dim = xs > ys ? 'x' : 'y';
+
+            pts.sort((a,b) => a[dim] - b[dim]);
+            const mid = Math.floor(pts.length/2);
+            S.steps.push({t:'p', node:{...node}, lp: pts.slice(0,mid), rp: pts.slice(mid), d});
+
+            node.l = bnode(pts.slice(0,mid), d+1);
+            node.r = bnode(pts.slice(mid), d+1);
+            return node;
+        }
+
+        function render() {
+            const p = gP.selectAll('circle').data(S.pts, d => d.id);
+            p.enter().append('circle')
+                .attr('cx', d => d.x).attr('cy', d => d.y)
+                .attr('r', 0).attr('fill', '#1d3557')
+                .transition().duration(120).attr('r', 3);
+            p.attr('cx', d => d.x).attr('cy', d => d.y);
+            p.exit().transition().duration(80).attr('r', 0).remove();
+        }
+
+        function renderStep(i) {
+            gB.selectAll('*').remove();
+
+            const balls = S.steps.slice(0, i+1).filter(s => s.t === 'r' || s.t === 'leaf');
+            balls.forEach((st, j) => {
+                const act = j === balls.length-1 && (S.steps[i].t === 'r' || S.steps[i].t === 'leaf');
+                drawBall(st.node, act);
+            });
+
+            const cur = S.steps[i];
+            if (cur.t === 'p') {
+                const li = new Set(cur.lp.map(p => p.id));
+                const ri = new Set(cur.rp.map(p => p.id));
+                gP.selectAll('circle')
+                    .attr('fill', d => li.has(d.id) ? '#c1121f' : ri.has(d.id) ? '#457b9d' : '#1d3557');
+            } else if (cur.node?.pts) {
+                const ai = new Set(cur.node.pts.map(p => p.id));
+                gP.selectAll('circle')
+                    .attr('fill', d => ai.has(d.id) ? '#c1121f' : '#1d3557')
+                    .attr('r', d => ai.has(d.id) ? 4 : 3);
+            }
+
+            document.getElementById('bt-prog').style.width = ((i+1)/S.steps.length*100)+'%';
+        }
+
+        function drawBall(n, act) {
+            const col = DC[Math.min(n.d, DC.length-1)];
+            const op = act ? 0.6 : 0.2;
+            const sw = act ? 1.5 : 1;
+            const dash = n.leaf ? 'none' : '3,2';
+
+            if (S.metric === 'euclidean') {
+                gB.append('circle')
+                    .attr('cx', n.c.x).attr('cy', n.c.y).attr('r', n.rad)
+                    .attr('fill', 'none').attr('stroke', col)
+                    .attr('stroke-width', sw).attr('stroke-dasharray', dash).attr('opacity', op);
+            } else if (S.metric === 'manhattan') {
+                const r = n.rad, cx = n.c.x, cy = n.c.y;
+                gB.append('path')
+                    .attr('d', `M${cx},${cy-r} L${cx+r},${cy} L${cx},${cy+r} L${cx-r},${cy} Z`)
+                    .attr('fill', 'none').attr('stroke', col)
+                    .attr('stroke-width', sw).attr('stroke-dasharray', dash).attr('opacity', op);
+            } else {
+                const r = n.rad, cx = n.c.x, cy = n.c.y;
+                gB.append('rect')
+                    .attr('x', cx-r).attr('y', cy-r).attr('width', r*2).attr('height', r*2)
+                    .attr('fill', 'none').attr('stroke', col)
+                    .attr('stroke-width', sw).attr('stroke-dasharray', dash).attr('opacity', op);
+            }
+
+            gB.append('circle')
+                .attr('cx', n.c.x).attr('cy', n.c.y)
+                .attr('r', act ? 3.5 : 2).attr('fill', col).attr('opacity', act ? 0.9 : 0.4);
+        }
+
+        function anim() {
+            S.play = true;
+            document.getElementById('bt-play').textContent = '⏸';
+            document.getElementById('bt-play').classList.add('on');
+            tick();
+        }
+
+        function tick() {
+            if (!S.play || S.si >= S.steps.length) {
+                S.play = false;
+                document.getElementById('bt-play').textContent = '▶';
+                document.getElementById('bt-play').classList.remove('on');
+                return;
+            }
+            renderStep(S.si);
+            S.si++;
+            setTimeout(tick, S.spd);
+        }
+
+        function toggle() {
+            if (S.play) {
+                S.play = false;
+                document.getElementById('bt-play').textContent = '▶';
+                document.getElementById('bt-play').classList.remove('on');
+            } else if (S.steps.length) {
+                if (S.si >= S.steps.length) S.si = 0;
+                anim();
+            }
+        }
+
+        function fwd() {
+            if (S.si < S.steps.length) { renderStep(S.si); S.si++; }
+        }
+
+        function back() {
+            if (S.si > 0) {
+                S.si--;
+                if (S.si > 0) renderStep(S.si - 1);
+                else { gB.selectAll('*').remove(); gP.selectAll('circle').attr('fill','#1d3557').attr('r',3); }
+            }
+        }
+
+        function clr() {
+            S.pts = [];
+            S.tree = null;
+            S.steps = [];
+            S.si = 0;
+            S.play = false;
+            gP.selectAll('*').remove();
+            gB.selectAll('*').remove();
+            document.getElementById('bt-prog').style.width = '0%';
+            stats();
+        }
+
+        function stats() {
+            document.getElementById('bt-pts').textContent = S.pts.length;
+            if (S.tree) {
+                const s = tstat(S.tree);
+                document.getElementById('bt-nodes').textContent = s.n;
+                document.getElementById('bt-depth').textContent = s.d;
+            } else {
+                document.getElementById('bt-nodes').textContent = '0';
+                document.getElementById('bt-depth').textContent = '0';
+            }
+        }
+
+        function tstat(n, dep=0) {
+            if (!n) return {n:0, d:0};
+            const l = tstat(n.l, dep+1), r = tstat(n.r, dep+1);
+            return {n: 1+l.n+r.n, d: Math.max(dep, l.d, r.d)};
+        }
+
+        init();
+    })();
+    </script>
+</body>
+</html>
