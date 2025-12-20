@@ -26,7 +26,7 @@ The implementation used in the paper can be found [here](https://github.com/maxx
 Of note first from the paper is the word "perfect" describing the data structure: Perfect binary trees allow for 
 more or less contiguous access throughout memory -- we can make use of heaps.
 
-More qualitaively interesting is that you're not required to partition the entirety of the space but instead localize the data structure
+More qualitatively interesting is that you're not required to partition the entirety of the space but instead localize the data structure
 to the clusters that _matter_.
 
 Look at the below widget to see how the tree is constructed, graphically only. You recursively refine the distances of points until at
@@ -36,7 +36,7 @@ We have $2^{L+1}$ index slots for $L = \lceil \log_2 n \rceil$ levels assuming w
         style="width:100%; height:420px; border:none; margin:1.5em 0;">
 </iframe>
 
-Let's carefully write down what the algortihm that's running here does. Again, we recurse through until the lowest level (two-node pairs),
+Let's carefully write down what the algorithm that's running here does. Again, we recurse through until the lowest level (two-node pairs),
 group them and subsequently build up the tree. We recursive on the number of points n. 
 ```text
 BUILD_BALLTREE(points):
@@ -95,7 +95,7 @@ We can recurse in parallel, neat!
 Due to the recursion it looks difficult to imagine how we can adapt this for an embarrassingly parallel
 procedure. The word "perfect" however allows us to really push the frontier: We can lay out the recursion
 as we know EXACTLY how many points there are. Sure, there might be divergences in execution and
-lots of function or kernel calls which make our lives difficult. But let's see hwo we can implement this as well.
+lots of function or kernel calls which make our lives difficult. But let's see how we can implement this as well.
 
 We will use Triton. Triton does not need an introduction. Spearheaded by OpenAI, it is one way to max your FLOPs
 for the architectures you have at hand.
@@ -124,9 +124,9 @@ Pytorch's argsort is backed by CUB/Thrust radix sort AFAIK.
 Yes, it's O(n \log n) per level instead of O(n) for true nth\_element. We're on acceptable sizes though where I imagine it difficult to
 be faster than highly optimized CUB procedures that have grown for years.
 
-
-```python
-# cat balltree_triton/kernel.py
+<details>
+<summary>balltree main entry in triton</summary>
+<pre><code class="language-python"># cat balltree_triton/kernel.py
 import torch
 import triton
 import triton.language as tl
@@ -235,12 +235,14 @@ def build_balltree_triton(data, batch_idx):
     )
 
     return out_idx, out_mask
-```
+</code></pre>
+</details>
 
 Processing: We compute per-batch metadata: where each batch starts/ends in the point array, how many levels each batch's tree needs,
 and offsets into the output array. This runs once before the main loop and we fully rely on Pytorch functionality.
-```python
-def _get_batch_info(batch_idx, device):
+<details>
+<summary>_get_batch_info</summary>
+<pre><code class="language-python">def _get_batch_info(batch_idx, device):
     n = batch_idx.shape[0]
     if n == 0:
         empty = torch.tensor([], device=device, dtype=torch.int64)
@@ -263,7 +265,8 @@ def _get_batch_info(batch_idx, device):
     total_tree_size = tree_sizes.sum().item()
 
     return starts, ends, counts, max_levels, tree_offsets, tree_sizes, total_tree_size
-```
+</code></pre>
+</details>
 
 A segment is a contiguous slice of the index array representing points to be split. Each one gets one thread block.
 The kernel does two passes over the segment's points:
@@ -279,8 +282,9 @@ For roughly uniform point distributions these coincide.
 For clustered data the tree structure differs slightly, but the spatial coherence property is preserved.
 The tiled loop lets one thread block handle arbitrarily large segments by processing `BLOCK` points at a time, accumulating partial min/max/sum across tiles.
 
-```python
-@triton.jit
+<details>
+<summary>_compute_split_kernel</summary>
+<pre><code class="language-python">@triton.jit
 def _compute_split_kernel(
     data_ptr,               # [n_total, dim] point coordinates
     indices_ptr,            # [n_total] current permutation of point indices
@@ -350,8 +354,8 @@ def _compute_split_kernel(
 
     pivot = sum_val / n.to(tl.float64)
     tl.store(pivots_ptr + seg_id, pivot)
-```
-
+</code></pre>
+</details>
 
 
 
@@ -362,8 +366,9 @@ Segments that are already singletons or belong to batches that have finished sub
 Yes, this is $O(n \log n)$ but again, we assume that these procedures optimized over years will hide huge latency spikes ...
 Maybe I'll revisit this later.
 
-```python
-def _partition_and_split(
+<details>
+<summary>_partition_and_split</summary>
+<pre><code class="language-python">def _partition_and_split(
     proj, indices, seg_starts, seg_ends, seg_batch, pivots, active
 ):
     device = proj.device
@@ -412,14 +417,16 @@ def _partition_and_split(
 
     valid = (new_ends - new_starts) > 0
     return new_starts[valid], new_ends[valid], new_batch[valid]
-```
+</code></pre>
+</details>
 
 Now, one thread per leaf segment: At termination, each segment contains 1-2 points.
 This kernel writes them into the output heap at the correct position. Single points get duplicated; pairs get written directly.
 The heap layout means `leaf\_id * 2` gives the output position. We omit any ludicrous pointer chasing.
 
-```python
-@triton.jit
+<details>
+<summary>_write_leaves_kernel</summary>
+<pre><code class="language-python">@triton.jit
 def _write_leaves_kernel(
     indices_ptr,            # [n_total] final permutation of point indices
     batch_data_starts_ptr,  # [n_batches] offset into global point array per batch
@@ -468,7 +475,8 @@ def _write_leaves_kernel(
         tl.store(out_idx_ptr + out_pos + 1, data_offset + li1)
         tl.store(out_mask_ptr + out_pos, True)
         tl.store(out_mask_ptr + out_pos + 1, True)
-```
+</code></pre>
+</details>
 
 The output is a flat array in heap layout: leaf i occupies slots 2i and 2i+1. The
 `out_mask` distinguishes real points from padding.
@@ -525,7 +533,7 @@ dimension benchmark (n=16384, single batch)
        4       gpu/triton       7.79ms      2.19x        ✓  
 ```
 
-Due to the symmetry of the sampling process, all results match exactly: It's hwoever easy to construct cases
+Due to the symmetry of the sampling process, all results match exactly: It's however easy to construct cases
 where our two different implementations will NOT yield the same result -- again, I'll investigate later
 how to get the median choice as a pivot point going within Triton and/or Pytorch.
 
