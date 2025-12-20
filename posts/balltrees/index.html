@@ -5,7 +5,7 @@ When solving the NLSE in 2+1 or 3+1 dimensions you might be well-served in refin
 to avoid catastrophically collapsing solitons. When running particle-in-cell codes, you build localized
 data structures to keep &ldquo;close elements close&rdquo;. Barnes-Hut
 is an algorithmic innovation to keep elements close as well."><meta name=author content="א"><link rel="preload stylesheet" as=style href=https://konradha.com/main.min.css><link rel=preload as=image href=https://konradha.com/theme.png><script defer src=https://konradha.com/highlight.min.js onload=hljs.initHighlightingOnLoad()></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",()=>renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],throwOnError:!1}))</script><link rel=icon href=https://konradha.com/favicon.ico><link rel=apple-touch-icon href=https://konradha.com/apple-touch-icon.png><meta name=generator content="Hugo 0.153.0"><meta itemprop=name content="Balltrees"><meta itemprop=description content="Physics usually has sparse and weird scales. From unstructured grids to irregular geometries to long-range interactions there are different ideas to bring ML models to understand “point clouds” with associated context and scales.
-When solving the NLSE in 2+1 or 3+1 dimensions you might be well-served in refining your grid to avoid catastrophically collapsing solitons. When running particle-in-cell codes, you build localized data structures to keep “close elements close”. Barnes-Hut is an algorithmic innovation to keep elements close as well."><meta itemprop=datePublished content="2025-12-19T13:28:21+01:00"><meta itemprop=dateModified content="2025-12-19T13:28:21+01:00"><meta itemprop=wordCount content="2880"><meta property="og:url" content="https://konradha.com/posts/balltrees/"><meta property="og:site_name" content="א"><meta property="og:title" content="Balltrees"><meta property="og:description" content="Physics usually has sparse and weird scales. From unstructured grids to irregular geometries to long-range interactions there are different ideas to bring ML models to understand “point clouds” with associated context and scales.
+When solving the NLSE in 2+1 or 3+1 dimensions you might be well-served in refining your grid to avoid catastrophically collapsing solitons. When running particle-in-cell codes, you build localized data structures to keep “close elements close”. Barnes-Hut is an algorithmic innovation to keep elements close as well."><meta itemprop=datePublished content="2025-12-19T13:28:21+01:00"><meta itemprop=dateModified content="2025-12-19T13:28:21+01:00"><meta itemprop=wordCount content="2889"><meta property="og:url" content="https://konradha.com/posts/balltrees/"><meta property="og:site_name" content="א"><meta property="og:title" content="Balltrees"><meta property="og:description" content="Physics usually has sparse and weird scales. From unstructured grids to irregular geometries to long-range interactions there are different ideas to bring ML models to understand “point clouds” with associated context and scales.
 When solving the NLSE in 2+1 or 3+1 dimensions you might be well-served in refining your grid to avoid catastrophically collapsing solitons. When running particle-in-cell codes, you build localized data structures to keep “close elements close”. Barnes-Hut is an algorithmic innovation to keep elements close as well."><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-12-19T13:28:21+01:00"><meta property="article:modified_time" content="2025-12-19T13:28:21+01:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Balltrees"><meta name=twitter:description content="Physics usually has sparse and weird scales. From unstructured grids to irregular geometries to long-range interactions there are different ideas to bring ML models to understand “point clouds” with associated context and scales.
 When solving the NLSE in 2+1 or 3+1 dimensions you might be well-served in refining your grid to avoid catastrophically collapsing solitons. When running particle-in-cell codes, you build localized data structures to keep “close elements close”. Barnes-Hut is an algorithmic innovation to keep elements close as well."><link rel=canonical href=https://konradha.com/posts/balltrees/><script data-goatcounter=https://konradha.goatcounter.com/count async src=//gc.zgo.at/count.js></script></head><link rel=stylesheet href=/css/fix.css><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-[--w] px-8 lg:justify-center"><div class="relative z-50 ltr:mr-auto rtl:ml-auto flex items-center"><a class="-translate-y-[1px] text-2xl font-medium" href=https://konradha.com/>א</a><div class="btn-dark text-[0] ltr:ml-4 rtl:mr-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 ltr:-mr-8 rtl:-ml-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#f8f5d7".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-10 rtl:space-x-reverse"><a class="block text-center text-xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100vh-9rem)] max-w-[--w] px-8 pb-16 pt-14 dark:prose-invert"><article><header class=mb-14><h1 class="!my-0 pb-2.5">Balltrees</h1><div class="text-xs antialiased opacity-60"><time>Dec 19, 2025</time></div></header><section><p>Physics usually has sparse and weird scales. From unstructured grids to irregular geometries to
 long-range interactions there are different ideas to bring ML models to understand &ldquo;point clouds&rdquo;
@@ -18,10 +18,10 @@ elements together that are &ldquo;close&rdquo; in some metric &ndash; what&rsquo
 you can set this up as a flat data structure highly adaptable to a diverse set of architectures and nice temporal as well as
 spatial locality.</p><p>Let&rsquo;s try to understand the algorithm to construct this data structure.
 The implementation used in the paper can be found <a href=https://github.com/maxxxzdn/balltree/blob/main/balltree/balltree.h>here</a>.</p><p>Of note first from the paper is the word &ldquo;perfect&rdquo; describing the data structure: Perfect binary trees allow for
-more or less contiguous access throughout memory &ndash; we can make use of heaps.</p><p>More qualitaively interesting is that you&rsquo;re not required to partition the entirety of the space but instead localize the data structure
+more or less contiguous access throughout memory &ndash; we can make use of heaps.</p><p>More qualitatively interesting is that you&rsquo;re not required to partition the entirety of the space but instead localize the data structure
 to the clusters that <em>matter</em>.</p><p>Look at the below widget to see how the tree is constructed, graphically only. You recursively refine the distances of points until at
 the lowest level you end with pairs that are represented by the &ldquo;perfect&rdquo; final level of the tree.
-We have $2^{L+1}$ index slots for $L = \lceil \log_2 n \rceil$ levels assuming we have $n$ points on our domain.</p><iframe src=/widgets/balltrees-embed.html style="width:100%;height:420px;border:none;margin:1.5em 0"></iframe><p>Let&rsquo;s carefully write down what the algortihm that&rsquo;s running here does. Again, we recurse through until the lowest level (two-node pairs),
+We have $2^{L+1}$ index slots for $L = \lceil \log_2 n \rceil$ levels assuming we have $n$ points on our domain.</p><iframe src=/widgets/balltrees-embed.html style="width:100%;height:420px;border:none;margin:1.5em 0"></iframe><p>Let&rsquo;s carefully write down what the algorithm that&rsquo;s running here does. Again, we recurse through until the lowest level (two-node pairs),
 group them and subsequently build up the tree. We recursive on the number of points n.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text><span style=display:flex><span>BUILD_BALLTREE(points):
 </span></span><span style=display:flex><span>    L ← ⌈log₂(n)⌉
 </span></span><span style=display:flex><span>    output ← array of 2^(L+1) index slots
@@ -62,7 +62,7 @@ group them and subsequently build up the tree. We recursive on the number of poi
 </span></span></code></pre></div><p>We can recurse in parallel, neat!</p><iframe src=/widgets/balltree-multicore-embed.html style="width:100%;height:420px;border:none;margin:1.5em 0"></iframe><p></p><p>Due to the recursion it looks difficult to imagine how we can adapt this for an embarrassingly parallel
 procedure. The word &ldquo;perfect&rdquo; however allows us to really push the frontier: We can lay out the recursion
 as we know EXACTLY how many points there are. Sure, there might be divergences in execution and
-lots of function or kernel calls which make our lives difficult. But let&rsquo;s see hwo we can implement this as well.</p><p>We will use Triton. Triton does not need an introduction. Spearheaded by OpenAI, it is one way to max your FLOPs
+lots of function or kernel calls which make our lives difficult. But let&rsquo;s see how we can implement this as well.</p><p>We will use Triton. Triton does not need an introduction. Spearheaded by OpenAI, it is one way to max your FLOPs
 for the architectures you have at hand.</p><p>The C++ implementation recurses cleanly. At each level, partition points and spawn two child calls.
 We cannot do that on device.
 No call stack, no dynamic recursion. Instead, we flatten the recursion into a level-by-level loop and track segments explicitly.
@@ -78,320 +78,313 @@ Finding the max-spread dimension requires iterating over dimensions and computin
 Irregular access patterns that don&rsquo;t map to standard Pytorch ops. Triton lets us write this as a single fused kernel with one thread block per segment.</p><p>On the other hand, rearranging indices around a pivot is fundamentally a sorting-like operation.
 Pytorch&rsquo;s argsort is backed by CUB/Thrust radix sort AFAIK.
 Yes, it&rsquo;s O(n \log n) per level instead of O(n) for true nth_element. We&rsquo;re on acceptable sizes though where I imagine it difficult to
-be faster than highly optimized CUB procedures that have grown for years.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># cat balltree_triton/kernel.py</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> torch
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> triton
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> triton.language <span style=color:#66d9ef>as</span> tl
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>build_balltree_triton</span>(data, batch_idx):
-</span></span><span style=display:flex><span>    device <span style=color:#f92672>=</span> data<span style=color:#f92672>.</span>device
-</span></span><span style=display:flex><span>    n, dim <span style=color:#f92672>=</span> data<span style=color:#f92672>.</span>shape
-</span></span><span style=display:flex><span>    dtype <span style=color:#f92672>=</span> data<span style=color:#f92672>.</span>dtype
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> torch<span style=color:#f92672>.</span>tensor([], device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64), torch<span style=color:#f92672>.</span>tensor(
-</span></span><span style=display:flex><span>            [], device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>bool
-</span></span><span style=display:flex><span>        )
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    starts, ends, counts, max_levels, tree_offsets, tree_sizes, total_tree_size <span style=color:#f92672>=</span> (
-</span></span><span style=display:flex><span>        _get_batch_info(batch_idx, device)
-</span></span><span style=display:flex><span>    )
-</span></span><span style=display:flex><span>    n_batches <span style=color:#f92672>=</span> starts<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n_batches <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> torch<span style=color:#f92672>.</span>tensor([], device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64), torch<span style=color:#f92672>.</span>tensor(
-</span></span><span style=display:flex><span>            [], device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>bool
-</span></span><span style=display:flex><span>        )
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    global_max_level <span style=color:#f92672>=</span> max_levels<span style=color:#f92672>.</span>max()<span style=color:#f92672>.</span>item()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    indices <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> range(n_batches):
-</span></span><span style=display:flex><span>        s, e <span style=color:#f92672>=</span> starts[i]<span style=color:#f92672>.</span>item(), ends[i]<span style=color:#f92672>.</span>item()
-</span></span><span style=display:flex><span>        indices[s:e] <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>arange(e <span style=color:#f92672>-</span> s, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    proj <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>dtype)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    seg_starts <span style=color:#f92672>=</span> starts<span style=color:#f92672>.</span>clone()
-</span></span><span style=display:flex><span>    seg_ends <span style=color:#f92672>=</span> ends<span style=color:#f92672>.</span>clone()
-</span></span><span style=display:flex><span>    seg_batch <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>arange(n_batches, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>    current_level <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>zeros(n_batches, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    BLOCK <span style=color:#f92672>=</span> <span style=color:#ae81ff>256</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> level <span style=color:#f92672>in</span> range(global_max_level):
-</span></span><span style=display:flex><span>        n_segs <span style=color:#f92672>=</span> seg_starts<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> n_segs <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>break</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        seg_levels <span style=color:#f92672>=</span> current_level[seg_batch]
-</span></span><span style=display:flex><span>        active <span style=color:#f92672>=</span> (seg_levels <span style=color:#f92672>&lt;</span> max_levels[seg_batch])<span style=color:#f92672>.</span>to(torch<span style=color:#f92672>.</span>int32)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        split_dims <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n_segs, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>        pivots <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n_segs, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>dtype)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        _compute_split_kernel[(n_segs,)](
-</span></span><span style=display:flex><span>            data,
-</span></span><span style=display:flex><span>            indices,
-</span></span><span style=display:flex><span>            proj,
-</span></span><span style=display:flex><span>            split_dims,
-</span></span><span style=display:flex><span>            pivots,
-</span></span><span style=display:flex><span>            seg_starts,
-</span></span><span style=display:flex><span>            seg_ends,
-</span></span><span style=display:flex><span>            seg_batch,
-</span></span><span style=display:flex><span>            starts,
-</span></span><span style=display:flex><span>            n_segs,
-</span></span><span style=display:flex><span>            dim,
-</span></span><span style=display:flex><span>            BLOCK<span style=color:#f92672>=</span>BLOCK,
-</span></span><span style=display:flex><span>        )
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        seg_starts, seg_ends, seg_batch <span style=color:#f92672>=</span> _partition_and_split(
-</span></span><span style=display:flex><span>            proj, indices, seg_starts, seg_ends, seg_batch, pivots, active
-</span></span><span style=display:flex><span>        )
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        current_level <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    n_segs <span style=color:#f92672>=</span> seg_starts<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n_segs <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> torch<span style=color:#f92672>.</span>zeros(
-</span></span><span style=display:flex><span>            total_tree_size, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64
-</span></span><span style=display:flex><span>        ), torch<span style=color:#f92672>.</span>zeros(total_tree_size, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>bool)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    seg_batch_sorted, batch_order <span style=color:#f92672>=</span> seg_batch<span style=color:#f92672>.</span>sort()
-</span></span><span style=display:flex><span>    leaf_ids <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>zeros(n_segs, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>    batch_counts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>bincount(seg_batch, minlength<span style=color:#f92672>=</span>n_batches)
-</span></span><span style=display:flex><span>    batch_offsets <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>cat(
-</span></span><span style=display:flex><span>        [torch<span style=color:#f92672>.</span>zeros(<span style=color:#ae81ff>1</span>, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64), batch_counts<span style=color:#f92672>.</span>cumsum(<span style=color:#ae81ff>0</span>)[:<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>]]
-</span></span><span style=display:flex><span>    )
-</span></span><span style=display:flex><span>    positions_in_batch <span style=color:#f92672>=</span> (
-</span></span><span style=display:flex><span>        torch<span style=color:#f92672>.</span>arange(n_segs, device<span style=color:#f92672>=</span>device) <span style=color:#f92672>-</span> batch_offsets[seg_batch_sorted]
-</span></span><span style=display:flex><span>    )
-</span></span><span style=display:flex><span>    leaf_ids[batch_order] <span style=color:#f92672>=</span> positions_in_batch
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    out_idx <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>zeros(total_tree_size, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>    out_mask <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>zeros(total_tree_size, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>bool)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    _write_leaves_kernel[(n_segs,)](
-</span></span><span style=display:flex><span>        indices,
-</span></span><span style=display:flex><span>        starts,
-</span></span><span style=display:flex><span>        tree_offsets,
-</span></span><span style=display:flex><span>        seg_starts,
-</span></span><span style=display:flex><span>        seg_ends,
-</span></span><span style=display:flex><span>        seg_batch,
-</span></span><span style=display:flex><span>        leaf_ids,
-</span></span><span style=display:flex><span>        out_idx,
-</span></span><span style=display:flex><span>        out_mask,
-</span></span><span style=display:flex><span>        n_segs,
-</span></span><span style=display:flex><span>    )
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> out_idx, out_mask
-</span></span></code></pre></div><p>Processing: We compute per-batch metadata: where each batch starts/ends in the point array, how many levels each batch&rsquo;s tree needs,
-and offsets into the output array. This runs once before the main loop and we fully rely on Pytorch functionality.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>_get_batch_info</span>(batch_idx, device):
-</span></span><span style=display:flex><span>    n <span style=color:#f92672>=</span> batch_idx<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>        empty <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor([], device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> empty, empty, empty, empty, empty, empty, <span style=color:#ae81ff>0</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    batch_ids, inverse <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>unique(batch_idx, sorted<span style=color:#f92672>=</span><span style=color:#66d9ef>True</span>, return_inverse<span style=color:#f92672>=</span><span style=color:#66d9ef>True</span>)
-</span></span><span style=display:flex><span>    n_batches <span style=color:#f92672>=</span> batch_ids<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>    counts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>bincount(inverse, minlength<span style=color:#f92672>=</span>n_batches)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    ends <span style=color:#f92672>=</span> counts<span style=color:#f92672>.</span>cumsum(<span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>    starts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>cat([torch<span style=color:#f92672>.</span>zeros(<span style=color:#ae81ff>1</span>, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64), ends[:<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>]])
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    max_levels <span style=color:#f92672>=</span> (counts<span style=color:#f92672>.</span>float()<span style=color:#f92672>.</span>log2()<span style=color:#f92672>.</span>ceil() <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>)<span style=color:#f92672>.</span>clamp(min<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)<span style=color:#f92672>.</span>long()
-</span></span><span style=display:flex><span>    n_leaves <span style=color:#f92672>=</span> (<span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> max_levels)<span style=color:#f92672>.</span>long()
-</span></span><span style=display:flex><span>    tree_sizes <span style=color:#f92672>=</span> n_leaves <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    tree_offsets <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>cat(
-</span></span><span style=display:flex><span>        [torch<span style=color:#f92672>.</span>zeros(<span style=color:#ae81ff>1</span>, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64), tree_sizes<span style=color:#f92672>.</span>cumsum(<span style=color:#ae81ff>0</span>)[:<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>]]
-</span></span><span style=display:flex><span>    )
-</span></span><span style=display:flex><span>    total_tree_size <span style=color:#f92672>=</span> tree_sizes<span style=color:#f92672>.</span>sum()<span style=color:#f92672>.</span>item()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> starts, ends, counts, max_levels, tree_offsets, tree_sizes, total_tree_size
-</span></span></code></pre></div><p>A segment is a contiguous slice of the index array representing points to be split. Each one gets one thread block.
+be faster than highly optimized CUB procedures that have grown for years.</p><details><summary>balltree main entry in triton</summary><pre><code class=language-python># cat balltree_triton/kernel.py
+import torch
+import triton
+import triton.language as tl
+<p>def build_balltree_triton(data, batch_idx):
+device = data.device
+n, dim = data.shape
+dtype = data.dtype</p>
+<pre><code>if n == 0:
+    return torch.tensor([], device=device, dtype=torch.int64), torch.tensor(
+        [], device=device, dtype=torch.bool
+    )
+
+starts, ends, counts, max_levels, tree_offsets, tree_sizes, total_tree_size = (
+    _get_batch_info(batch_idx, device)
+)
+n_batches = starts.shape[0]
+
+if n_batches == 0:
+    return torch.tensor([], device=device, dtype=torch.int64), torch.tensor(
+        [], device=device, dtype=torch.bool
+    )
+
+global_max_level = max_levels.max().item()
+
+indices = torch.empty(n, device=device, dtype=torch.int64)
+for i in range(n_batches):
+    s, e = starts[i].item(), ends[i].item()
+    indices[s:e] = torch.arange(e - s, device=device, dtype=torch.int64)
+
+proj = torch.empty(n, device=device, dtype=dtype)
+
+seg_starts = starts.clone()
+seg_ends = ends.clone()
+seg_batch = torch.arange(n_batches, device=device, dtype=torch.int64)
+current_level = torch.zeros(n_batches, device=device, dtype=torch.int64)
+
+BLOCK = 256
+
+for level in range(global_max_level):
+    n_segs = seg_starts.shape[0]
+    if n_segs == 0:
+        break
+
+    seg_levels = current_level[seg_batch]
+    active = (seg_levels &lt; max_levels[seg_batch]).to(torch.int32)
+
+    split_dims = torch.empty(n_segs, device=device, dtype=torch.int64)
+    pivots = torch.empty(n_segs, device=device, dtype=dtype)
+
+    _compute_split_kernel[(n_segs,)](
+        data,
+        indices,
+        proj,
+        split_dims,
+        pivots,
+        seg_starts,
+        seg_ends,
+        seg_batch,
+        starts,
+        n_segs,
+        dim,
+        BLOCK=BLOCK,
+    )
+
+    seg_starts, seg_ends, seg_batch = _partition_and_split(
+        proj, indices, seg_starts, seg_ends, seg_batch, pivots, active
+    )
+
+    current_level += 1
+
+n_segs = seg_starts.shape[0]
+
+if n_segs == 0:
+    return torch.zeros(
+        total_tree_size, device=device, dtype=torch.int64
+    ), torch.zeros(total_tree_size, device=device, dtype=torch.bool)
+
+seg_batch_sorted, batch_order = seg_batch.sort()
+leaf_ids = torch.zeros(n_segs, device=device, dtype=torch.int64)
+batch_counts = torch.bincount(seg_batch, minlength=n_batches)
+batch_offsets = torch.cat(
+    [torch.zeros(1, device=device, dtype=torch.int64), batch_counts.cumsum(0)[:-1]]
+)
+positions_in_batch = (
+    torch.arange(n_segs, device=device) - batch_offsets[seg_batch_sorted]
+)
+leaf_ids[batch_order] = positions_in_batch
+
+out_idx = torch.zeros(total_tree_size, device=device, dtype=torch.int64)
+out_mask = torch.zeros(total_tree_size, device=device, dtype=torch.bool)
+
+_write_leaves_kernel[(n_segs,)](
+    indices,
+    starts,
+    tree_offsets,
+    seg_starts,
+    seg_ends,
+    seg_batch,
+    leaf_ids,
+    out_idx,
+    out_mask,
+    n_segs,
+)
+
+return out_idx, out_mask
+</code></pre><p></code></pre></p></details><p>Processing: We compute per-batch metadata: where each batch starts/ends in the point array, how many levels each batch&rsquo;s tree needs,
+and offsets into the output array. This runs once before the main loop and we fully rely on Pytorch functionality.</p><details><summary>_get_batch_info</summary><pre><code class=language-python>def _get_batch_info(batch_idx, device):
+    n = batch_idx.shape[0]
+    if n == 0:
+        empty = torch.tensor([], device=device, dtype=torch.int64)
+        return empty, empty, empty, empty, empty, empty, 0
+<pre><code>batch_ids, inverse = torch.unique(batch_idx, sorted=True, return_inverse=True)
+n_batches = batch_ids.shape[0]
+counts = torch.bincount(inverse, minlength=n_batches)
+
+ends = counts.cumsum(0)
+starts = torch.cat([torch.zeros(1, device=device, dtype=torch.int64), ends[:-1]])
+
+max_levels = (counts.float().log2().ceil() - 1).clamp(min=0).long()
+n_leaves = (1 &lt;&lt; max_levels).long()
+tree_sizes = n_leaves * 2
+
+tree_offsets = torch.cat(
+    [torch.zeros(1, device=device, dtype=torch.int64), tree_sizes.cumsum(0)[:-1]]
+)
+total_tree_size = tree_sizes.sum().item()
+
+return starts, ends, counts, max_levels, tree_offsets, tree_sizes, total_tree_size
+</code></pre><p></code></pre></p></details><p>A segment is a contiguous slice of the index array representing points to be split. Each one gets one thread block.
 The kernel does two passes over the segment&rsquo;s points:</p><p>Pass 1: Find split dimension. For each of the dim coordinate axes, compute min and max across all points in the segment.
 Track which dimension has the largest spread. This is the balltree heuristic: split along the axis where points are most dispersed.</p><p>Pass 2: Project and compute pivot. Read the coordinate values along the chosen dimension, write them to proj
 (used by the subsequent partitioning step), and accumulate their sum. The pivot is the mean of these values.</p><p>Median would give balanced splits by count; mean gives balanced splits by coordinate value.
 For roughly uniform point distributions these coincide.
 For clustered data the tree structure differs slightly, but the spatial coherence property is preserved.
-The tiled loop lets one thread block handle arbitrarily large segments by processing <code>BLOCK</code> points at a time, accumulating partial min/max/sum across tiles.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a6e22e>@triton.jit</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>_compute_split_kernel</span>(
-</span></span><span style=display:flex><span>    data_ptr,               <span style=color:#75715e># [n_total, dim] point coordinates</span>
-</span></span><span style=display:flex><span>    indices_ptr,            <span style=color:#75715e># [n_total] current permutation of point indices</span>
-</span></span><span style=display:flex><span>    proj_ptr,               <span style=color:#75715e># [n_total] output: projected values for partitioning</span>
-</span></span><span style=display:flex><span>    split_dims_ptr,         <span style=color:#75715e># [n_segs] output: chosen split dimension per segment</span>
-</span></span><span style=display:flex><span>    pivots_ptr,             <span style=color:#75715e># [n_segs] output: pivot value (mean) per segment</span>
-</span></span><span style=display:flex><span>    seg_starts_ptr,         <span style=color:#75715e># [n_segs] segment start indices into indices_ptr</span>
-</span></span><span style=display:flex><span>    seg_ends_ptr,           <span style=color:#75715e># [n_segs] segment end indices (exclusive)</span>
-</span></span><span style=display:flex><span>    seg_batch_ptr,          <span style=color:#75715e># [n_segs] which batch each segment belongs to</span>
-</span></span><span style=display:flex><span>    batch_data_starts_ptr,  <span style=color:#75715e># [n_batches] offset into data_ptr for each batch</span>
-</span></span><span style=display:flex><span>    n_segs,
-</span></span><span style=display:flex><span>    dim: tl<span style=color:#f92672>.</span>constexpr,
-</span></span><span style=display:flex><span>    BLOCK: tl<span style=color:#f92672>.</span>constexpr,
-</span></span><span style=display:flex><span>):
-</span></span><span style=display:flex><span>    seg_id <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>program_id(<span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> seg_id <span style=color:#f92672>&gt;=</span> n_segs:
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    start <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(seg_starts_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>    end <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(seg_ends_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>    n <span style=color:#f92672>=</span> end <span style=color:#f92672>-</span> start
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>1</span>: <span style=color:#75715e># nothing to split</span>
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(split_dims_ptr <span style=color:#f92672>+</span> seg_id, <span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(pivots_ptr <span style=color:#f92672>+</span> seg_id, <span style=color:#ae81ff>0.0</span>)
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    batch_id <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(seg_batch_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>    data_offset <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(batch_data_starts_ptr <span style=color:#f92672>+</span> batch_id)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    first_idx <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(indices_ptr <span style=color:#f92672>+</span> start)
-</span></span><span style=display:flex><span>    best_dim <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
-</span></span><span style=display:flex><span>    best_spread <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(data_ptr <span style=color:#f92672>+</span> (data_offset <span style=color:#f92672>+</span> first_idx) <span style=color:#f92672>*</span> dim)<span style=color:#f92672>.</span>to(tl<span style=color:#f92672>.</span>float64)
-</span></span><span style=display:flex><span>    best_spread <span style=color:#f92672>=</span> best_spread <span style=color:#f92672>-</span> best_spread
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> d <span style=color:#f92672>in</span> range(dim):
-</span></span><span style=display:flex><span>        min_val: tl<span style=color:#f92672>.</span>float64 <span style=color:#f92672>=</span> <span style=color:#ae81ff>1e308</span>
-</span></span><span style=display:flex><span>        max_val: tl<span style=color:#f92672>.</span>float64 <span style=color:#f92672>=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1e308</span>
-</span></span><span style=display:flex><span>        <span style=color:#75715e># tile over points in segment</span>
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> block_start <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>0</span>, n, BLOCK):
-</span></span><span style=display:flex><span>            offs <span style=color:#f92672>=</span> block_start <span style=color:#f92672>+</span> tl<span style=color:#f92672>.</span>arange(<span style=color:#ae81ff>0</span>, BLOCK)
-</span></span><span style=display:flex><span>            mask <span style=color:#f92672>=</span> offs <span style=color:#f92672>&lt;</span> n
-</span></span><span style=display:flex><span>            local_idx <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(indices_ptr <span style=color:#f92672>+</span> start <span style=color:#f92672>+</span> offs, mask<span style=color:#f92672>=</span>mask, other<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>            vals <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(
-</span></span><span style=display:flex><span>                data_ptr <span style=color:#f92672>+</span> (data_offset <span style=color:#f92672>+</span> local_idx) <span style=color:#f92672>*</span> dim <span style=color:#f92672>+</span> d, mask<span style=color:#f92672>=</span>mask, other<span style=color:#f92672>=</span><span style=color:#ae81ff>0.0</span>
-</span></span><span style=display:flex><span>            )<span style=color:#f92672>.</span>to(tl<span style=color:#f92672>.</span>float64)
-</span></span><span style=display:flex><span>            min_val <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>minimum(min_val, tl<span style=color:#f92672>.</span>min(tl<span style=color:#f92672>.</span>where(mask, vals, <span style=color:#ae81ff>1e308</span>)))
-</span></span><span style=display:flex><span>            max_val <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>maximum(max_val, tl<span style=color:#f92672>.</span>max(tl<span style=color:#f92672>.</span>where(mask, vals, <span style=color:#f92672>-</span><span style=color:#ae81ff>1e308</span>)))
-</span></span><span style=display:flex><span>        spread <span style=color:#f92672>=</span> max_val <span style=color:#f92672>-</span> min_val
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> spread <span style=color:#f92672>&gt;</span> best_spread:
-</span></span><span style=display:flex><span>            best_spread <span style=color:#f92672>=</span> spread
-</span></span><span style=display:flex><span>            best_dim <span style=color:#f92672>=</span> d
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#75715e># natural barrier between &#34;passes&#34;</span>
-</span></span><span style=display:flex><span>    tl<span style=color:#f92672>.</span>store(split_dims_ptr <span style=color:#f92672>+</span> seg_id, best_dim)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    sum_val <span style=color:#f92672>=</span> best_spread <span style=color:#f92672>-</span> best_spread
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> block_start <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>0</span>, n, BLOCK):
-</span></span><span style=display:flex><span>        offs <span style=color:#f92672>=</span> block_start <span style=color:#f92672>+</span> tl<span style=color:#f92672>.</span>arange(<span style=color:#ae81ff>0</span>, BLOCK)
-</span></span><span style=display:flex><span>        mask <span style=color:#f92672>=</span> offs <span style=color:#f92672>&lt;</span> n
-</span></span><span style=display:flex><span>        local_idx <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(indices_ptr <span style=color:#f92672>+</span> start <span style=color:#f92672>+</span> offs, mask<span style=color:#f92672>=</span>mask, other<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>        vals <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(
-</span></span><span style=display:flex><span>            data_ptr <span style=color:#f92672>+</span> (data_offset <span style=color:#f92672>+</span> local_idx) <span style=color:#f92672>*</span> dim <span style=color:#f92672>+</span> best_dim, mask<span style=color:#f92672>=</span>mask, other<span style=color:#f92672>=</span><span style=color:#ae81ff>0.0</span>
-</span></span><span style=display:flex><span>        )<span style=color:#f92672>.</span>to(tl<span style=color:#f92672>.</span>float64)
-</span></span><span style=display:flex><span>        sum_val <span style=color:#f92672>+=</span> tl<span style=color:#f92672>.</span>sum(tl<span style=color:#f92672>.</span>where(mask, vals, <span style=color:#ae81ff>0.0</span>))
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(proj_ptr <span style=color:#f92672>+</span> start <span style=color:#f92672>+</span> offs, vals, mask<span style=color:#f92672>=</span>mask)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    pivot <span style=color:#f92672>=</span> sum_val <span style=color:#f92672>/</span> n<span style=color:#f92672>.</span>to(tl<span style=color:#f92672>.</span>float64)
-</span></span><span style=display:flex><span>    tl<span style=color:#f92672>.</span>store(pivots_ptr <span style=color:#f92672>+</span> seg_id, pivot)
-</span></span></code></pre></div><p>This part now uses pure Pytorch. We rearrange indices so that within each segment, points below the pivot come before points above.
+The tiled loop lets one thread block handle arbitrarily large segments by processing <code>BLOCK</code> points at a time, accumulating partial min/max/sum across tiles.</p><details><summary>_compute_split_kernel</summary><pre><code class=language-python>@triton.jit
+def _compute_split_kernel(
+    data_ptr,               # [n_total, dim] point coordinates
+    indices_ptr,            # [n_total] current permutation of point indices
+    proj_ptr,               # [n_total] output: projected values for partitioning
+    split_dims_ptr,         # [n_segs] output: chosen split dimension per segment
+    pivots_ptr,             # [n_segs] output: pivot value (mean) per segment
+    seg_starts_ptr,         # [n_segs] segment start indices into indices_ptr
+    seg_ends_ptr,           # [n_segs] segment end indices (exclusive)
+    seg_batch_ptr,          # [n_segs] which batch each segment belongs to
+    batch_data_starts_ptr,  # [n_batches] offset into data_ptr for each batch
+    n_segs,
+    dim: tl.constexpr,
+    BLOCK: tl.constexpr,
+):
+    seg_id = tl.program_id(0)
+    if seg_id >= n_segs:
+        return
+<pre><code>start = tl.load(seg_starts_ptr + seg_id)
+end = tl.load(seg_ends_ptr + seg_id)
+n = end - start
+
+if n &lt;= 1: # nothing to split
+    tl.store(split_dims_ptr + seg_id, 0)
+    tl.store(pivots_ptr + seg_id, 0.0)
+    return
+
+batch_id = tl.load(seg_batch_ptr + seg_id)
+data_offset = tl.load(batch_data_starts_ptr + batch_id)
+
+first_idx = tl.load(indices_ptr + start)
+best_dim = 0
+best_spread = tl.load(data_ptr + (data_offset + first_idx) * dim).to(tl.float64)
+best_spread = best_spread - best_spread
+
+for d in range(dim):
+    min_val: tl.float64 = 1e308
+    max_val: tl.float64 = -1e308
+    # tile over points in segment
+    for block_start in range(0, n, BLOCK):
+        offs = block_start + tl.arange(0, BLOCK)
+        mask = offs &lt; n
+        local_idx = tl.load(indices_ptr + start + offs, mask=mask, other=0)
+        vals = tl.load(
+            data_ptr + (data_offset + local_idx) * dim + d, mask=mask, other=0.0
+        ).to(tl.float64)
+        min_val = tl.minimum(min_val, tl.min(tl.where(mask, vals, 1e308)))
+        max_val = tl.maximum(max_val, tl.max(tl.where(mask, vals, -1e308)))
+    spread = max_val - min_val
+    if spread &gt; best_spread:
+        best_spread = spread
+        best_dim = d
+
+# natural barrier between &quot;passes&quot;
+tl.store(split_dims_ptr + seg_id, best_dim)
+
+sum_val = best_spread - best_spread
+for block_start in range(0, n, BLOCK):
+    offs = block_start + tl.arange(0, BLOCK)
+    mask = offs &lt; n
+    local_idx = tl.load(indices_ptr + start + offs, mask=mask, other=0)
+    vals = tl.load(
+        data_ptr + (data_offset + local_idx) * dim + best_dim, mask=mask, other=0.0
+    ).to(tl.float64)
+    sum_val += tl.sum(tl.where(mask, vals, 0.0))
+    tl.store(proj_ptr + start + offs, vals, mask=mask)
+
+pivot = sum_val / n.to(tl.float64)
+tl.store(pivots_ptr + seg_id, pivot)
+</code></pre><p></code></pre></p></details><p>This part now uses pure Pytorch. We rearrange indices so that within each segment, points below the pivot come before points above.
 This is a segmented sort: we construct a composite key (segment_id, proj_value) and call argsort.
 Segments that are already singletons or belong to batches that have finished subdividing (tracked by <code>active</code>) get passed through unchanged. The <code>valid</code> mask filters out empty segments.
 Yes, this is $O(n \log n)$ but again, we assume that these procedures optimized over years will hide huge latency spikes &mldr;
-Maybe I&rsquo;ll revisit this later.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>_partition_and_split</span>(
-</span></span><span style=display:flex><span>    proj, indices, seg_starts, seg_ends, seg_batch, pivots, active
-</span></span><span style=display:flex><span>):
-</span></span><span style=display:flex><span>    device <span style=color:#f92672>=</span> proj<span style=color:#f92672>.</span>device
-</span></span><span style=display:flex><span>    n <span style=color:#f92672>=</span> proj<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>    n_segs <span style=color:#f92672>=</span> seg_starts<span style=color:#f92672>.</span>shape[<span style=color:#ae81ff>0</span>]
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>or</span> n_segs <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>        empty <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>tensor([], device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> empty, empty, empty
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    active_bool <span style=color:#f92672>=</span> active<span style=color:#f92672>.</span>bool()
-</span></span><span style=display:flex><span>    seg_lengths <span style=color:#f92672>=</span> seg_ends <span style=color:#f92672>-</span> seg_starts
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    point_seg <span style=color:#f92672>=</span> (
-</span></span><span style=display:flex><span>        torch<span style=color:#f92672>.</span>bucketize(torch<span style=color:#f92672>.</span>arange(n, device<span style=color:#f92672>=</span>device), seg_starts, right<span style=color:#f92672>=</span><span style=color:#66d9ef>True</span>) <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span>    )
-</span></span><span style=display:flex><span>    point_seg <span style=color:#f92672>=</span> point_seg<span style=color:#f92672>.</span>clamp(<span style=color:#ae81ff>0</span>, n_segs <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    max_proj <span style=color:#f92672>=</span> proj<span style=color:#f92672>.</span>abs()<span style=color:#f92672>.</span>max() <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>
-</span></span><span style=display:flex><span>    sort_key <span style=color:#f92672>=</span> point_seg<span style=color:#f92672>.</span>double() <span style=color:#f92672>*</span> max_proj <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>+</span> proj<span style=color:#f92672>.</span>double()
-</span></span><span style=display:flex><span>    sorted_order <span style=color:#f92672>=</span> sort_key<span style=color:#f92672>.</span>argsort()
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    new_indices <span style=color:#f92672>=</span> indices[sorted_order]
-</span></span><span style=display:flex><span>    indices<span style=color:#f92672>.</span>copy_(new_indices)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    left_counts <span style=color:#f92672>=</span> seg_lengths <span style=color:#f92672>//</span> <span style=color:#ae81ff>2</span>
-</span></span><span style=display:flex><span>    left_counts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>where(active_bool <span style=color:#f92672>&amp;</span> (seg_lengths <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>1</span>), left_counts, seg_lengths)
-</span></span><span style=display:flex><span>    left_counts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>clamp(left_counts, min<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span>)
-</span></span><span style=display:flex><span>    left_counts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>where(seg_lengths <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>1</span>, seg_lengths, left_counts)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    mids <span style=color:#f92672>=</span> seg_starts <span style=color:#f92672>+</span> left_counts
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    n_out <span style=color:#f92672>=</span> n_segs <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span>
-</span></span><span style=display:flex><span>    new_starts <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n_out, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>    new_ends <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n_out, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>    new_batch <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>empty(n_out, device<span style=color:#f92672>=</span>device, dtype<span style=color:#f92672>=</span>torch<span style=color:#f92672>.</span>int64)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    should_split <span style=color:#f92672>=</span> active_bool <span style=color:#f92672>&amp;</span> (seg_lengths <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>1</span>)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    new_starts[<span style=color:#ae81ff>0</span>::<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> seg_starts
-</span></span><span style=display:flex><span>    new_ends[<span style=color:#ae81ff>0</span>::<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>where(should_split, mids, seg_ends)
-</span></span><span style=display:flex><span>    new_starts[<span style=color:#ae81ff>1</span>::<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> torch<span style=color:#f92672>.</span>where(should_split, mids, seg_ends)
-</span></span><span style=display:flex><span>    new_ends[<span style=color:#ae81ff>1</span>::<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> seg_ends
-</span></span><span style=display:flex><span>    new_batch[<span style=color:#ae81ff>0</span>::<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> seg_batch
-</span></span><span style=display:flex><span>    new_batch[<span style=color:#ae81ff>1</span>::<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> seg_batch
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    valid <span style=color:#f92672>=</span> (new_ends <span style=color:#f92672>-</span> new_starts) <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> new_starts[valid], new_ends[valid], new_batch[valid]
-</span></span></code></pre></div><p>Now, one thread per leaf segment: At termination, each segment contains 1-2 points.
+Maybe I&rsquo;ll revisit this later.</p><details><summary>_partition_and_split</summary><pre><code class=language-python>def _partition_and_split(
+    proj, indices, seg_starts, seg_ends, seg_batch, pivots, active
+):
+    device = proj.device
+    n = proj.shape[0]
+    n_segs = seg_starts.shape[0]
+<pre><code>if n == 0 or n_segs == 0:
+    empty = torch.tensor([], device=device, dtype=torch.int64)
+    return empty, empty, empty
+
+active_bool = active.bool()
+seg_lengths = seg_ends - seg_starts
+
+point_seg = (
+    torch.bucketize(torch.arange(n, device=device), seg_starts, right=True) - 1
+)
+point_seg = point_seg.clamp(0, n_segs - 1)
+
+max_proj = proj.abs().max() + 1
+sort_key = point_seg.double() * max_proj * 2 + proj.double()
+sorted_order = sort_key.argsort()
+
+new_indices = indices[sorted_order]
+indices.copy_(new_indices)
+
+left_counts = seg_lengths // 2
+left_counts = torch.where(active_bool &amp; (seg_lengths &gt; 1), left_counts, seg_lengths)
+left_counts = torch.clamp(left_counts, min=1)
+left_counts = torch.where(seg_lengths &lt;= 1, seg_lengths, left_counts)
+
+mids = seg_starts + left_counts
+
+n_out = n_segs * 2
+new_starts = torch.empty(n_out, device=device, dtype=torch.int64)
+new_ends = torch.empty(n_out, device=device, dtype=torch.int64)
+new_batch = torch.empty(n_out, device=device, dtype=torch.int64)
+
+should_split = active_bool &amp; (seg_lengths &gt; 1)
+
+new_starts[0::2] = seg_starts
+new_ends[0::2] = torch.where(should_split, mids, seg_ends)
+new_starts[1::2] = torch.where(should_split, mids, seg_ends)
+new_ends[1::2] = seg_ends
+new_batch[0::2] = seg_batch
+new_batch[1::2] = seg_batch
+
+valid = (new_ends - new_starts) &gt; 0
+return new_starts[valid], new_ends[valid], new_batch[valid]
+</code></pre><p></code></pre></p></details><p>Now, one thread per leaf segment: At termination, each segment contains 1-2 points.
 This kernel writes them into the output heap at the correct position. Single points get duplicated; pairs get written directly.
-The heap layout means <code>leaf\_id * 2</code> gives the output position. We omit any ludicrous pointer chasing.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#a6e22e>@triton.jit</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>_write_leaves_kernel</span>(
-</span></span><span style=display:flex><span>    indices_ptr,            <span style=color:#75715e># [n_total] final permutation of point indices</span>
-</span></span><span style=display:flex><span>    batch_data_starts_ptr,  <span style=color:#75715e># [n_batches] offset into global point array per batch</span>
-</span></span><span style=display:flex><span>    tree_offsets_ptr,       <span style=color:#75715e># [n_batches] offset into output array per batch&#39;s tree</span>
-</span></span><span style=display:flex><span>    seg_starts_ptr,         <span style=color:#75715e># [n_segs] segment start indices</span>
-</span></span><span style=display:flex><span>    seg_ends_ptr,           <span style=color:#75715e># [n_segs] segment end indices</span>
-</span></span><span style=display:flex><span>    seg_batch_ptr,          <span style=color:#75715e># [n_segs] which batch each segment belongs to</span>
-</span></span><span style=display:flex><span>    leaf_ids_ptr,           <span style=color:#75715e># [n_segs] position of this leaf within its batch&#39;s tree</span>
-</span></span><span style=display:flex><span>    out_idx_ptr,            <span style=color:#75715e># output: [total_tree_size] point indices in heap layout</span>
-</span></span><span style=display:flex><span>    out_mask_ptr,           <span style=color:#75715e># output: [total_tree_size] validity mask (False = duplicate)</span>
-</span></span><span style=display:flex><span>    n_segs,
-</span></span><span style=display:flex><span>):
-</span></span><span style=display:flex><span>    seg_id <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>program_id(<span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> seg_id <span style=color:#f92672>&gt;=</span> n_segs:
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    start <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(seg_starts_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>    end <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(seg_ends_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>    n <span style=color:#f92672>=</span> end <span style=color:#f92672>-</span> start
-</span></span><span style=display:flex><span>    batch <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(seg_batch_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>    leaf_id <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(leaf_ids_ptr <span style=color:#f92672>+</span> seg_id)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#75715e># compute where this leaf&#39;s pair belongs in the output heap</span>
-</span></span><span style=display:flex><span>    data_offset <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(batch_data_starts_ptr <span style=color:#f92672>+</span> batch)
-</span></span><span style=display:flex><span>    tree_offset <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(tree_offsets_ptr <span style=color:#f92672>+</span> batch)
-</span></span><span style=display:flex><span>    out_pos <span style=color:#f92672>=</span> tree_offset <span style=color:#f92672>+</span> leaf_id <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span> <span style=color:#75715e># exactly two slots per leaf</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> n <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_idx_ptr <span style=color:#f92672>+</span> out_pos, <span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_idx_ptr <span style=color:#f92672>+</span> out_pos <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_mask_ptr <span style=color:#f92672>+</span> out_pos, <span style=color:#66d9ef>False</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_mask_ptr <span style=color:#f92672>+</span> out_pos <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>False</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>elif</span> n <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span>:
-</span></span><span style=display:flex><span>        <span style=color:#75715e># single point, need duplication</span>
-</span></span><span style=display:flex><span>        local_idx <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(indices_ptr <span style=color:#f92672>+</span> start)
-</span></span><span style=display:flex><span>        gidx <span style=color:#f92672>=</span> data_offset <span style=color:#f92672>+</span> local_idx
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_idx_ptr <span style=color:#f92672>+</span> out_pos, gidx)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_idx_ptr <span style=color:#f92672>+</span> out_pos <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, gidx)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_mask_ptr <span style=color:#f92672>+</span> out_pos, <span style=color:#66d9ef>True</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_mask_ptr <span style=color:#f92672>+</span> out_pos <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>False</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>else</span>:
-</span></span><span style=display:flex><span>        <span style=color:#75715e># two or more points </span>
-</span></span><span style=display:flex><span>        li0 <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(indices_ptr <span style=color:#f92672>+</span> start)
-</span></span><span style=display:flex><span>        li1 <span style=color:#f92672>=</span> tl<span style=color:#f92672>.</span>load(indices_ptr <span style=color:#f92672>+</span> start <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_idx_ptr <span style=color:#f92672>+</span> out_pos, data_offset <span style=color:#f92672>+</span> li0)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_idx_ptr <span style=color:#f92672>+</span> out_pos <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, data_offset <span style=color:#f92672>+</span> li1)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_mask_ptr <span style=color:#f92672>+</span> out_pos, <span style=color:#66d9ef>True</span>)
-</span></span><span style=display:flex><span>        tl<span style=color:#f92672>.</span>store(out_mask_ptr <span style=color:#f92672>+</span> out_pos <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>True</span>)
-</span></span></code></pre></div><p>The output is a flat array in heap layout: leaf i occupies slots 2i and 2i+1. The
+The heap layout means <code>leaf\_id * 2</code> gives the output position. We omit any ludicrous pointer chasing.</p><details><summary>_write_leaves_kernel</summary><pre><code class=language-python>@triton.jit
+def _write_leaves_kernel(
+    indices_ptr,            # [n_total] final permutation of point indices
+    batch_data_starts_ptr,  # [n_batches] offset into global point array per batch
+    tree_offsets_ptr,       # [n_batches] offset into output array per batch's tree
+    seg_starts_ptr,         # [n_segs] segment start indices
+    seg_ends_ptr,           # [n_segs] segment end indices
+    seg_batch_ptr,          # [n_segs] which batch each segment belongs to
+    leaf_ids_ptr,           # [n_segs] position of this leaf within its batch's tree
+    out_idx_ptr,            # output: [total_tree_size] point indices in heap layout
+    out_mask_ptr,           # output: [total_tree_size] validity mask (False = duplicate)
+    n_segs,
+):
+    seg_id = tl.program_id(0)
+    if seg_id >= n_segs:
+        return
+<pre><code>start = tl.load(seg_starts_ptr + seg_id)
+end = tl.load(seg_ends_ptr + seg_id)
+n = end - start
+batch = tl.load(seg_batch_ptr + seg_id)
+leaf_id = tl.load(leaf_ids_ptr + seg_id)
+
+# compute where this leaf's pair belongs in the output heap
+data_offset = tl.load(batch_data_starts_ptr + batch)
+tree_offset = tl.load(tree_offsets_ptr + batch)
+out_pos = tree_offset + leaf_id * 2 # exactly two slots per leaf
+
+if n == 0:
+    tl.store(out_idx_ptr + out_pos, 0)
+    tl.store(out_idx_ptr + out_pos + 1, 0)
+    tl.store(out_mask_ptr + out_pos, False)
+    tl.store(out_mask_ptr + out_pos + 1, False)
+elif n == 1:
+    # single point, need duplication
+    local_idx = tl.load(indices_ptr + start)
+    gidx = data_offset + local_idx
+    tl.store(out_idx_ptr + out_pos, gidx)
+    tl.store(out_idx_ptr + out_pos + 1, gidx)
+    tl.store(out_mask_ptr + out_pos, True)
+    tl.store(out_mask_ptr + out_pos + 1, False)
+else:
+    # two or more points 
+    li0 = tl.load(indices_ptr + start)
+    li1 = tl.load(indices_ptr + start + 1)
+    tl.store(out_idx_ptr + out_pos, data_offset + li0)
+    tl.store(out_idx_ptr + out_pos + 1, data_offset + li1)
+    tl.store(out_mask_ptr + out_pos, True)
+    tl.store(out_mask_ptr + out_pos + 1, True)
+</code></pre><p></code></pre></p></details><p>The output is a flat array in heap layout: leaf i occupies slots 2i and 2i+1. The
 <code>out_mask</code> distinguishes real points from padding.
 When a segment has a single point, we duplicate it to maintain the pair structure but mark the duplicate as invalid.</p><p>The &ldquo;perfect&rdquo; binary tree isn&rsquo;t just an aesthetic choice — it&rsquo;s what makes GPU execution tractable.
 Consider the alternative: variable-size neighborhoods. Point A has 12 neighbors, point B has 47, point C has 3.
@@ -424,7 +417,7 @@ RTX 6000 Pro Blackwell Server cards which give us considerable access to compute
 </span></span><span style=display:flex><span>       <span style=color:#ae81ff>3</span>       gpu/triton       7.65ms      3.06x        ✓  
 </span></span><span style=display:flex><span>       <span style=color:#ae81ff>4</span>       cpu/cython      17.03ms      1.00x        ✓  
 </span></span><span style=display:flex><span>       <span style=color:#ae81ff>4</span>       gpu/triton       7.79ms      2.19x        ✓  
-</span></span></code></pre></div><p>Due to the symmetry of the sampling process, all results match exactly: It&rsquo;s hwoever easy to construct cases
+</span></span></code></pre></div><p>Due to the symmetry of the sampling process, all results match exactly: It&rsquo;s however easy to construct cases
 where our two different implementations will NOT yield the same result &ndash; again, I&rsquo;ll investigate later
 how to get the median choice as a pivot point going within Triton and/or Pytorch.</p><p>Overall though, preprocessing and thinking some more about how to make the kernels faster</p><h3 id=thread-divergence>Thread divergence</h3><p>The balltree construction has a fundamental efficiency problem on GPUs that&rsquo;s worth understanding precisely.</p><p>At level $l$, we have $2^l$ segments, each containing $n / 2^l$ points.
 Each segment gets one thread block (256 threads). The utilization at level $l$ is:</p><p>$$
