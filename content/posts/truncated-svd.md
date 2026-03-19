@@ -1,7 +1,7 @@
 ---
 title: "Truncated SVD's missing bwd"
 date: 2026-03-18T22:48:41+01:00
-draft: true
+draft: false
 ---
 For some applications, truncated eigensolves are an important
 gate to differentiate through so I looked up what the physics literature has to offer. I found [Naumann's recent paper](https://arxiv.org/abs/2511.14651) 
