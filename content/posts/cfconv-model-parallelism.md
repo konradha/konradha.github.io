@@ -4,7 +4,7 @@ date: 2026-05-02T17:38:40+02:00
 draft: false
 ---
 
-Continuous kernels you say? I am honestly not sure why they're called continuous:
+Continuous kernels you say? I am honestly not sure why they're called continuous: Sure, the parametrization may be, the layer however still lives in discrete space.
 Read [here](https://s2.smu.edu/~eclarson/pubs/2025_AIPR_Fourier.pdf). 
 It's a technique about large kernels and how with a large number of stencil points added your training becomes essentially infeasible.
 Hence, you have to introduce some sampling. Even better, you can pipe an MLP between input and kernel so you can learn what
