@@ -189,4 +189,4 @@ continuous Fourier kernel but instead could give you a way to an estimator-aware
 - Harper, Wood et al.,
   [Scaling Continuous Kernels with Sparse Fourier Domain Learning](https://s2.smu.edu/~eclarson/pubs/2025_AIPR_Fourier.pdf).
 - Dryden, Maruyama et al.,
-  [Channel and Filter Parallelism for Large-Scale CNN Training](https://www.ndryden.com/data/papers/sc2019-chanfilt.pdf), SC 2019.
+  [Channel and Filter Parallelism for Large-Scale CNN Training](https://www.ndryden.com/data/papers/sc2019-chanfilt.pdf).
