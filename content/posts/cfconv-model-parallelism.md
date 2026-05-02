@@ -149,7 +149,7 @@ output-channel contributions.
 
 <img src="/plots/cfconv-model-parallelism-mp-scaling.png">
 
-_Synthetic training-step benchmark. Four ranks, image size $256\times256$, batch size 8 per rank, six CF-Conv blocks, $2^{18}$ sampled kernel positions.
+_Synthetic training benchmark, up to four ranks with constant inp = $256^2$ six CF-Conv blocks (as described by Wood et al.), $2^{18}$ sampled kernel positions.
 Crosses mark configurations that did not finish successfully in the benchmark row._
 
 Stateful MP=1 reaches the frontier quickly whereas larger and more ranks move it outward.
