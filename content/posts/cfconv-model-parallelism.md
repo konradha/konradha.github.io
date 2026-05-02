@@ -90,15 +90,14 @@ $$M_{\mathrm{state}} = 2 b H W_{\mathrm{r}} C_{\mathrm{in}} C_{\mathrm{out}}.$$
 The factor of two is due to complex numbers being treated separately. The $W_{\mathrm{r}}$ denotes the
 RFFT half-spectrum. The $C_{\mathrm{in}}C_{\mathrm{out}}$ might need to be sharded when you scale channel width.
 
-This is exactly the limitation the CF-Conv paper leaves open: each layer still needs a stateful Fourier kernel of shape roughly
+Each layer still needs a stateful Fourier kernel of shape roughly
 $H \times W \times C_{\mathrm{in}} \times C_{\mathrm{out}} \times 2$. While it does not remove the state itself, sparse refresh reduces MLP evaluation and gradient storage. 
 
-Data parallelism does not solve that. In DDP you'd roughly end up with
+Data parallelism does not solve that, in DDP you'd roughly end up with
 
 $$M_{\mathrm{per\ GPU}}^{\mathrm{DDP}} = M_{\mathrm{state}}.$$
 
-You get more samples per step, maybe better throughput, but the kernel still has
-to fit on each GPU.
+You get more samples per step, maybe better throughput, but the kernel still has to fit on each GPU.
 What we really want is to shard the kernel state itself.
 
 Dryden and friends's [channel and filter parallelism work](https://www.ndryden.com/data/papers/sc2019-chanfilt.pdf) explores this in-depth.
