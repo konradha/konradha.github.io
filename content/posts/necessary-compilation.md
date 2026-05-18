@@ -201,3 +201,26 @@ comms would compile much more easily.
 
 All this to say: My current additions need some work. Dependency management
 is broken and to allow for actual pipelining I need to fix this.
+
+
+##### Edit: 2026-05-18
+#### Update: Test this now in 2.12
+
+The dependency bug is fixed, and the fix is applied in the Inductor lowering.
+`batch_p2p_ops` needed registering with the Inductor backend because otherwise
+it could just reorder them freely.
+
+Data flow is now explicit: It builds a `_CollectiveKernel`, and for each `irecv` it marks the receive buffer as
+mutated by that kernel. Once the recv buffer is a mutation output of the
+collective, the scheduler is forced to order anything reading it _after_ the
+collective. The hoisting can't happen anymore because the dependency it was
+ignoring is now actually in the graph. `isend` ops get a zero-element
+placeholder output wired to the same kernel so the send is anchored too.
+
+The path sits behind a flag for now:
+`TORCHDYNAMO_ENABLE_P2P_COMPILATION=1`, or
+`torch._dynamo.config.enable_p2p_compilation`.
+
+The missing piece is removing any redundant copies in the lowering pass.
+Future work as one might say. Additionally, natively supporting SymmetricMemory and other nice
+features is now on the list.
