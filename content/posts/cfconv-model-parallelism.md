@@ -184,6 +184,20 @@ that turns out to matter, the model-parallel story is not merely scaling a
 continuous Fourier kernel but instead could give you a way to an estimator-aware parallelism.
 
 
+### Edit 2026-05-18
+
+## Trying to make this stratified sampling work
+
+The question was: If you shard the kernel and let each shard draw its own sample, does *which coordinate lands on which shard* actually change
+the estimator? If it does, the partition is no longer just a memory decision and you could come up with "estimator-aware parallelism".
+
+Over several weeks I've looked at different training regimes where this could apply but in conclusion we can just assert:
+
+Sharding this operator across GPUs works cleanly and doesn't create load imbalance but in this regime the per-shard residual is too even
+for sampler-side allocation to improve anything, so the multi-GPU win here is memory. I did not come up with an enhanced estimator formulation;
+however we can now tackle huge kernels using the multi-GPU regime.
+
+
 ## References
 
 - Harper, Wood et al.,
