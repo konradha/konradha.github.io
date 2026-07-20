@@ -1,7 +1,7 @@
 {{ $isBlogArea := or (eq .Section "posts") (eq .Type "posts") (eq .Layout "cv") }}
 <header class="{{ if $isBlogArea }}blog-site-header{{ else }}mx-auto flex h-[4.5rem] max-w-[--w] px-8 lg:justify-center{{ end }}">
   {{ if $isBlogArea }}
-  <a class="blog-site-brand" href="{{ `/` | relURL }}">Konrad Handrick</a>
+  <a class="blog-site-brand" href="{{ `/` | relURL }}">konrad</a>
   <nav class="blog-site-nav" aria-label="Site navigation">
     <a href="{{ `/about/` | relURL }}">About</a>
     <a href="{{ `/posts/` | relURL }}">Writing</a>
