@@ -34,10 +34,10 @@
   <!---->
   {{- $custom := resources.Get "custom.css" | minify -}}
   <!---->
-  {{- $css := slice $main $custom | resources.Concat "main.min.css" -}}
-  <link rel="preload stylesheet" as="style" href="{{- $css.RelPermalink -}}" />
-  <link rel="stylesheet" href="{{- `css/site-shell.css` | relURL -}}" />
-  <script defer src="{{- `js/site-shell.js` | relURL -}}"></script>
+  {{- $css := slice $main $custom | resources.Concat "main.min.css" | fingerprint -}}
+  <link rel="preload stylesheet" as="style" href="{{- $css.RelPermalink -}}" integrity="{{ $css.Data.Integrity }}" />
+  <link rel="stylesheet" href="{{- `css/site-shell.css` | relURL -}}?v={{ now.Unix }}" />
+  <script defer src="{{- `js/site-shell.js` | relURL -}}?v={{ now.Unix }}"></script>
 
   <!-- dark icon -->
   {{- $dark_icon := "theme.png" -}}

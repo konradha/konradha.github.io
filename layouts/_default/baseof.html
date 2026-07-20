@@ -40,7 +40,7 @@
   dir="{{ if site.Params.direction }}{{ site.Params.direction }}{{ else }}ltr{{ end }}"
 >
   {{ partial "head.html" . }}
-  <body class="text-black duration-200 ease-out dark:text-white">
+  <body class="text-black duration-200 ease-out dark:text-white{{ if or (eq .Section "posts") (eq .Type "posts") }} blog-writing{{ end }}{{ if eq .Layout "cv" }} blog-writing cv-page{{ end }}">
     {{ partial "header.html" . }}
 
     <main

@@ -6,13 +6,13 @@
     <meta name="theme-color" content="#08090b" />
     <meta
       name="description"
-      content="Konrad Handrick. ML systems, numerics."
+      content="Konrad. ML systems, numerics."
     />
-    <title>Konrad Handrick</title>
+    <title>konrad</title>
     <link rel="canonical" href="{{ .Permalink }}" />
-    <link rel="stylesheet" href="{{ `css/landing.css` | relURL }}" />
-    <link rel="stylesheet" href="{{ `css/site-shell.css` | relURL }}" />
-    <script defer src="{{ `js/site-shell.js` | relURL }}"></script>
+    <link rel="stylesheet" href="{{ `css/landing.css` | relURL }}?v={{ now.Unix }}" />
+    <link rel="stylesheet" href="{{ `css/site-shell.css` | relURL }}?v={{ now.Unix }}" />
+    <script defer src="{{ `js/site-shell.js` | relURL }}?v={{ now.Unix }}"></script>
     {{ range .AlternativeOutputFormats -}}
     <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }}" />
     {{ end -}}
@@ -24,7 +24,7 @@
       <button class="mode-toggle" type="button" aria-pressed="false" aria-label="☀️">☀️</button>
     </nav>
 
-    <main id="main" class="page" aria-label="Konrad Handrick homepage">
+    <main id="main" class="page" aria-label="konrad homepage">
 
       <section class="hero" aria-labelledby="name">
         <aside class="loc-card" aria-label="location">
@@ -37,14 +37,14 @@
           <figure class="profile-photo">
             <img
               src="/img/konrad-ferry.webp"
-              alt="Ferry photo of Konrad Handrick."
+              alt="Ferry photo of Konrad."
               width="320"
               height="360"
               decoding="async"
               onerror="this.closest('.profile-photo').classList.add('is-missing'); this.hidden = true;"
             />
           </figure>
-          <h1 id="name">Konrad Handrick</h1>
+          <h1 id="name">konrad</h1>
           <p class="role">ML systems, numerics</p>
           <nav class="social-links" aria-label="links">
             <a href="https://github.com/konradha">github</a>
