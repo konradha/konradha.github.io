@@ -1,4 +1,13 @@
-<header class="mx-auto flex h-[4.5rem] max-w-[--w] px-8 lg:justify-center">
+{{ $isBlogArea := or (eq .Section "posts") (eq .Type "posts") (eq .Layout "cv") }}
+<header class="{{ if $isBlogArea }}blog-site-header{{ else }}mx-auto flex h-[4.5rem] max-w-[--w] px-8 lg:justify-center{{ end }}">
+  {{ if $isBlogArea }}
+  <a class="blog-site-brand" href="{{ `/` | relURL }}">Konrad Handrick</a>
+  <nav class="blog-site-nav" aria-label="Site navigation">
+    <a href="{{ `/about/` | relURL }}">About</a>
+    <a href="{{ `/posts/` | relURL }}">Writing</a>
+  </nav>
+  <button class="btn-dark mode-toggle blog-theme-toggle" type="button" aria-label="switch theme">☾</button>
+  {{ else }}
   <div class="relative z-50 ltr:mr-auto rtl:ml-auto flex items-center">
     <a class="-translate-y-[1px] text-2xl font-medium" href="{{ `` | absURL }}"
       >{{ site.Title }}</a
@@ -15,54 +24,70 @@
     role="button"
     aria-label="Menu"
   ></div>
+  {{ end }}
 
   {{ $bg_color := $.Scratch.Get "bg_color" }}<!---->
 
   <script>
-    // base
-    const htmlClass = document.documentElement.classList;
-    setTimeout(() => {
-      htmlClass.remove('not-ready');
-    }, 10);
+    (() => {
+      const htmlClass = document.documentElement.classList;
+      setTimeout(() => {
+        htmlClass.remove('not-ready');
+      }, 10);
 
-    // mobile menu
-    const btnMenu = document.querySelector('.btn-menu');
-    btnMenu.addEventListener('click', () => {
-      htmlClass.toggle('open');
-    });
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      const lightBg = '{{ $bg_color }}'.replace(/"/g, '');
+      const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      const themeStorageKey = 'dark';
+      const setDark = (isDark, persist = false) => {
+        metaTheme?.setAttribute('content', isDark ? '#000' : lightBg);
+        htmlClass.toggle('dark', isDark);
+        document.body?.classList.toggle('theme-night', isDark);
+        document.body?.classList.toggle('theme-day', !isDark);
+        document.querySelectorAll('.mode-toggle').forEach((button) => {
+          button.setAttribute('aria-pressed', String(!isDark));
+          button.setAttribute('aria-label', isDark ? 'switch to day mode' : 'switch to night mode');
+          button.textContent = isDark ? '☀︎' : '☾';
+        });
+        if (persist) {
+          localStorage.setItem(themeStorageKey, String(isDark));
+        }
+      };
 
-    // dark theme
-    const metaTheme = document.querySelector('meta[name="theme-color"]');
-    const lightBg = '{{ $bg_color }}'.replace(/"/g, '');
-    const setDark = (isDark) => {
-      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
-      htmlClass[isDark ? 'add' : 'remove']('dark');
-      localStorage.setItem('dark', isDark);
-    };
+      const storedTheme = localStorage.getItem(themeStorageKey);
+      setDark(
+        storedTheme === null
+          ? htmlClass.contains('dark') || darkScheme.matches
+          : storedTheme === 'true',
+      );
 
-    // init
-    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    if (htmlClass.contains('dark')) {
-      setDark(true);
-    } else {
-      const darkVal = localStorage.getItem('dark');
-      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
-    }
+      darkScheme.addEventListener('change', (event) => {
+        if (localStorage.getItem(themeStorageKey) === null) {
+          setDark(event.matches);
+        }
+      });
 
-    // listen system
-    darkScheme.addEventListener('change', (event) => {
-      setDark(event.matches);
-    });
+      window.addEventListener('storage', (event) => {
+        if (event.key === themeStorageKey && event.newValue !== null) {
+          setDark(event.newValue === 'true');
+        }
+      });
 
-    // manual switch
-    const btnDark = document.querySelector('.btn-dark');
-    btnDark.addEventListener('click', () => {
-      setDark(localStorage.getItem('dark') !== 'true');
-    });
+      const btnDark = document.querySelector('.btn-dark');
+      btnDark?.addEventListener('click', () => {
+        const previousTheme = localStorage.getItem(themeStorageKey);
+        window.setTimeout(() => {
+          if (localStorage.getItem(themeStorageKey) === previousTheme) {
+            setDark(previousTheme !== 'true', true);
+          }
+        }, 0);
+      });
+    })();
   </script>
 
+  {{ if not $isBlogArea }}
   <div
-    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"
   >
     {{ $url := .RelPermalink }}<!---->
     {{ with site.Menus.main }}
@@ -95,4 +120,5 @@
     </nav>
     {{ end }}<!---->
   </div>
+  {{ end }}
 </header>

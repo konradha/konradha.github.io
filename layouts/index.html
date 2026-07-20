@@ -1,0 +1,66 @@
+<!doctype html>
+<html class="dark" lang="{{ or site.LanguageCode site.Language.Lang }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#08090b" />
+    <meta
+      name="description"
+      content="Konrad Handrick. ML systems, numerics."
+    />
+    <title>Konrad Handrick</title>
+    <link rel="canonical" href="{{ .Permalink }}" />
+    <link rel="stylesheet" href="{{ `css/landing.css` | relURL }}" />
+    <link rel="stylesheet" href="{{ `css/site-shell.css` | relURL }}" />
+    <script defer src="{{ `js/site-shell.js` | relURL }}"></script>
+    {{ range .AlternativeOutputFormats -}}
+    <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }}" />
+    {{ end -}}
+    {{ partial "analytics.html" . }}
+  </head>
+  <body class="landing-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <nav class="landing-controls" aria-label="display controls">
+      <button class="mode-toggle" type="button" aria-pressed="false" aria-label="☀️">☀️</button>
+    </nav>
+
+    <main id="main" class="page" aria-label="Konrad Handrick homepage">
+
+      <section class="hero" aria-labelledby="name">
+        <aside class="loc-card" aria-label="location">
+          <p class="card-label">whereabouts</p>
+          <p class="loc-place">Switzerland</p>
+          <p class="coords">near La Gruyère</p>
+        </aside>
+
+        <section class="profile" aria-label="profile">
+          <figure class="profile-photo">
+            <img
+              src="/img/konrad-ferry.webp"
+              alt="Ferry photo of Konrad Handrick."
+              width="320"
+              height="360"
+              decoding="async"
+              onerror="this.closest('.profile-photo').classList.add('is-missing'); this.hidden = true;"
+            />
+          </figure>
+          <h1 id="name">Konrad Handrick</h1>
+          <p class="role">ML systems, numerics</p>
+          <nav class="social-links" aria-label="links">
+            <a href="https://github.com/konradha">github</a>
+            <a href="https://linkedin.com/in/konradha">linkedin</a>
+            <a href="mailto:konradha@yahoo.com">email</a>
+            <a href="/cv/" aria-label="CV placeholder">cv</a>
+          </nav>
+          <div class="spotify-portal" aria-label="spotify player"></div>
+        </section>
+
+      </section>
+
+      <section class="bio" aria-label="intro">
+        <p>I work on ML systems and numerics.</p>
+        <p>Notes occasionally appear on the <a href="/posts/">blog</a>.</p>
+      </section>
+    </main>
+  </body>
+</html>

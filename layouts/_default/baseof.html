@@ -49,6 +49,6 @@
       {{ block "main" . }}{{ end }}
     </main>
 
-    {{ partial "footer.html" . }}
+    {{ if not (or (eq .Section "posts") (eq .Type "posts") (eq .Layout "cv")) }}{{ partial "footer.html" . }}{{ end }}
   </body>
 </html>

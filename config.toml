@@ -9,6 +9,7 @@ theme = "hugo-paper"
 [params]
   color = 'wheat'
   math = true
+  disableHLJS = true
 
 [markup]
   [markup.goldmark]
@@ -19,6 +20,11 @@ theme = "hugo-paper"
       [markup.goldmark.extensions.passthrough.delimiters]
         block = [['$$', '$$']]
         inline = [['$', '$']]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = false
+    noClasses = false
+    lineNos = false
 
 [menu]
   [[menu.main]]

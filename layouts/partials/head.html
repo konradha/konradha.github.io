@@ -30,12 +30,14 @@
   {{- end -}}
 
   <!-- css & js -->
-  {{- $main := resources.Get "main.css" -}}
+  {{- $main := resources.Get "main.css" | minify -}}
   <!---->
-  {{- $custom := resources.Get "custom.css" -}}
+  {{- $custom := resources.Get "custom.css" | minify -}}
   <!---->
-  {{- $css := slice $main $custom | resources.Concat "main.css" | minify -}}
-  <link rel="preload stylesheet" as="style" href="{{- $css.Permalink -}}" />
+  {{- $css := slice $main $custom | resources.Concat "main.min.css" -}}
+  <link rel="preload stylesheet" as="style" href="{{- $css.RelPermalink -}}" />
+  <link rel="stylesheet" href="{{- `css/site-shell.css` | relURL -}}" />
+  <script defer src="{{- `js/site-shell.js` | relURL -}}"></script>
 
   <!-- dark icon -->
   {{- $dark_icon := "theme.png" -}}
@@ -115,6 +117,3 @@
 
   {{ partial "analytics.html" . }}
 </head>
-<link rel="stylesheet" href="/css/fix.css">
-
-
