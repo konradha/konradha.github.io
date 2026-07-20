@@ -59,6 +59,11 @@
 
   function mountPlayer() {
     const player = ensurePlayer();
+    if (!document.body.classList.contains('landing-page')) {
+      player.remove();
+      return;
+    }
+
     const portal = document.querySelector('.spotify-portal');
     if (portal && player.parentElement !== portal) {
       portal.appendChild(player);
