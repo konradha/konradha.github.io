@@ -79,6 +79,36 @@
     mountPlayer();
   }
 
+  function renderMath(attempt, generation) {
+    if (generation !== shell.mathGeneration) return;
+
+    const content = document.querySelector('.blog-content');
+    if (!content) return;
+
+    if (typeof window.renderMathInElement === 'function') {
+      window.renderMathInElement(content, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+        ],
+        throwOnError: false,
+      });
+      return;
+    }
+
+    // KaTeX may still be downloading after an in-site navigation. Keep this
+    // page's render request alive, but abandon it as soon as we navigate again.
+    if (attempt < 200) {
+      window.setTimeout(() => renderMath(attempt + 1, generation), 50);
+    }
+  }
+
+  function syncPage() {
+    syncControls();
+    shell.mathGeneration = (shell.mathGeneration || 0) + 1;
+    renderMath(0, shell.mathGeneration);
+  }
+
   function mergeHead(nextDoc) {
     document.title = nextDoc.title;
 
@@ -123,7 +153,7 @@
       document.body.className = nextDoc.body.className;
       document.body.innerHTML = nextDoc.body.innerHTML;
       if (push) history.pushState({ siteShell: true }, '', url);
-      syncControls();
+      syncPage();
       window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
     } catch (_) {
       window.location.href = url;
@@ -170,8 +200,8 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', syncControls, { once: true });
+    document.addEventListener('DOMContentLoaded', syncPage, { once: true });
   } else {
-    syncControls();
+    syncPage();
   }
 })();
