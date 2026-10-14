@@ -777,7 +777,7 @@ main.prose .chroma .p {
 /* Quarto/Dullien-style writing pages. Landing keeps its separate neon treatment. */
 body:has(.blog-single-shell),
 body:has(.blog-index-page),
-body:has(.cv-placeholder) {
+body:has(.cv-document) {
   --blog-bg: #ffffff;
   --blog-text: #23262a;
   --blog-muted: #6b7178;
@@ -794,7 +794,7 @@ body:has(.cv-placeholder) {
 
 body:has(.blog-single-shell),
 body:has(.blog-index-page),
-body:has(.cv-placeholder),
+body:has(.cv-document),
 .blog-index-page,
 .blog-single-shell,
 .blog-content {
@@ -805,13 +805,13 @@ body:has(.cv-placeholder),
 
 body:has(.blog-single-shell),
 body:has(.blog-index-page),
-body:has(.cv-placeholder) {
+body:has(.cv-document) {
   overflow-x: hidden;
 }
 
 body:has(.blog-single-shell) > header.blog-site-header,
 body:has(.blog-index-page) > header.blog-site-header,
-body:has(.cv-placeholder) > header.blog-site-header {
+body:has(.cv-document) > header.blog-site-header {
   position: sticky;
   top: 0;
   z-index: 30;
@@ -1031,7 +1031,7 @@ body.theme-night:has(.blog-index-page) > header.blog-site-header {
   background: #f8f9fa;
 }
 
-body:has(.cv-placeholder) {
+body:has(.cv-document) {
   --blog-bg: #ffffff;
   --blog-text: #23262a;
   --blog-muted: #6b7178;
@@ -1046,7 +1046,7 @@ body:has(.cv-placeholder) {
     "Helvetica Neue", Arial, sans-serif;
 }
 
-body:has(.cv-placeholder) > main.prose {
+body:has(.cv-document) > main.prose {
   max-width: none;
   margin: 0;
   padding: 4rem 1.875rem 5rem;
@@ -1054,28 +1054,19 @@ body:has(.cv-placeholder) > main.prose {
   color: var(--blog-text);
 }
 
-body:has(.cv-placeholder) > footer {
+body:has(.cv-document) > footer {
   display: none;
 }
 
-.cv-placeholder {
-  max-width: 38rem;
+.cv-document {
+  max-width: 64rem;
   margin: 0 auto;
   color: var(--blog-text);
   font-size: 1.05rem;
   line-height: 1.62;
 }
 
-.cv-eyebrow {
-  margin: 0 0 0.7rem;
-  color: var(--blog-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.cv-placeholder h1 {
+.cv-document h1 {
   margin: 0 0 1.2rem;
   color: var(--blog-heading);
   font-size: clamp(2rem, 4vw, 2.6rem);
@@ -1084,11 +1075,11 @@ body:has(.cv-placeholder) > footer {
   line-height: 1.1;
 }
 
-.cv-placeholder p {
+.cv-document p {
   margin: 1rem 0;
 }
 
-.cv-placeholder a {
+.cv-document a {
   color: var(--blog-link);
   text-decoration: underline;
   text-underline-offset: 0.16em;

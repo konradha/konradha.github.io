@@ -3,4 +3,4 @@ title = "CV"
 layout = "cv"
 +++
 
-CV placeholder.
+[View CV (PDF)](/cv/konrad-handrick-cv.pdf)
